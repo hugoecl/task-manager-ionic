@@ -1,0 +1,110 @@
+<!-- Página Sobre -->
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Sobre</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="about-content">
+  
+  <!-- Logo e Nome -->
+  <div class="app-info">
+    <div class="logo">
+      <ion-icon name="checkmark-done-circle-outline"></ion-icon>
+    </div>
+    <h1>Task Manager</h1>
+    <p class="version">Versão {{ appVersion }}</p>
+  </div>
+
+  <!-- Descrição -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="information-circle-outline"></ion-icon>
+        Sobre a Aplicação
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p>
+        O <strong>Task Manager</strong> é uma aplicação móvel para gestão de tarefas 
+        desenvolvida com <strong>Ionic + Angular</strong>.
+      </p>
+      <p>
+        Permite gerir tarefas, projetos e categorias de forma simples e intuitiva, 
+        com visualização em calendário das datas limite.
+      </p>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Funcionalidades -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="star-outline"></ion-icon>
+        Funcionalidades
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list lines="none">
+        <ion-item>
+          <ion-icon slot="start" name="pricetags-outline" color="primary"></ion-icon>
+          <ion-label>Gestão de Categorias</ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-icon slot="start" name="folder-outline" color="primary"></ion-icon>
+          <ion-label>Gestão de Projetos</ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-icon slot="start" name="checkbox-outline" color="primary"></ion-icon>
+          <ion-label>Gestão de Tarefas</ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-icon slot="start" name="calendar-outline" color="primary"></ion-icon>
+          <ion-label>Calendário de Tarefas</ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-icon slot="start" name="alert-circle-outline" color="danger"></ion-icon>
+          <ion-label>Identificação de Tarefas em Atraso</ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Créditos -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="school-outline"></ion-icon>
+        Trabalho Prático
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p><strong>Unidade Curricular:</strong> Programação Móvel e Ubíqua</p>
+      <p><strong>Desenvolvido por:</strong> Hugo Leite</p>
+      <p><strong>Ano:</strong> {{ currentYear }}</p>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Tecnologias -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="code-slash-outline"></ion-icon>
+        Tecnologias
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="tech-badges">
+        <ion-badge color="primary">Ionic 8</ion-badge>
+        <ion-badge color="danger">Angular 20</ion-badge>
+        <ion-badge color="tertiary">TypeScript</ion-badge>
+        <ion-badge color="success">Capacitor</ion-badge>
+        <ion-badge color="warning">Ionic Storage</ion-badge>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+</ion-content>

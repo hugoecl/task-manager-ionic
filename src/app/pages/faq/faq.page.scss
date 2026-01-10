@@ -1,0 +1,87 @@
+/**
+ * Estilos da Página de Perguntas Frequentes
+ */
+
+/* Header */
+.faq-header {
+  text-align: center;
+  padding: 32px 16px;
+  background: linear-gradient(135deg, var(--ion-color-primary), var(--ion-color-primary-shade));
+
+  ion-icon {
+    font-size: 60px;
+    color: #ffffff;
+  }
+
+  h2 {
+    color: #ffffff;
+    font-size: 24px;
+    font-weight: 700;
+    margin: 16px 0 8px 0;
+  }
+
+  p {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 14px;
+    margin: 0;
+  }
+}
+
+/* Acordeão */
+ion-accordion-group {
+  margin: 16px;
+}
+
+ion-accordion {
+  margin-bottom: 8px;
+  border-radius: 12px;
+  overflow: hidden;
+
+  ion-item[slot="header"] {
+    --background: var(--ion-card-background);
+    --border-radius: 12px;
+
+    .question {
+      font-weight: 600;
+      white-space: normal;
+    }
+  }
+
+  .answer {
+    background: var(--ion-background-color);
+    padding: 16px;
+
+    p {
+      margin: 0;
+      line-height: 1.6;
+      color: var(--ion-text-color);
+    }
+  }
+}
+
+/* Card de contacto */
+ion-card {
+  margin: 16px;
+  border-radius: 12px;
+
+  ion-card-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+
+    ion-icon {
+      font-size: 20px;
+    }
+  }
+
+  p {
+    margin-bottom: 16px;
+    line-height: 1.6;
+  }
+
+  ion-button {
+    --border-radius: 24px;
+  }
+}
+

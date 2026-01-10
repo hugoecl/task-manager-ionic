@@ -1,3 +1,44 @@
+<!-- Componente Principal da Aplicação -->
 <ion-app>
-  <ion-router-outlet></ion-router-outlet>
+  
+  <!-- Side Menu Lateral -->
+  <ion-menu contentId="main-content" menuId="main-menu" type="overlay">
+    
+    <!-- Header do Menu -->
+    <ion-header>
+      <ion-toolbar color="primary">
+        <ion-title>MENU</ion-title>
+      </ion-toolbar>
+    </ion-header>
+    
+    <!-- Conteúdo do Menu -->
+    <ion-content>
+      <ion-list lines="full">
+        
+        <!-- Início (Welcome) -->
+        <ion-item button routerLink="/welcome" routerDirection="root" (click)="closeMenu()">
+          <ion-icon slot="start" name="home-outline"></ion-icon>
+          <ion-label>INÍCIO</ion-label>
+        </ion-item>
+        
+        <!-- Sobre -->
+        <ion-item button routerLink="/about" routerDirection="forward" (click)="closeMenu()">
+          <ion-icon slot="start" name="information-circle-outline"></ion-icon>
+          <ion-label>SOBRE</ion-label>
+        </ion-item>
+        
+        <!-- Perguntas -->
+        <ion-item button routerLink="/faq" routerDirection="forward" (click)="closeMenu()">
+          <ion-icon slot="start" name="help-circle-outline"></ion-icon>
+          <ion-label>PERGUNTAS</ion-label>
+        </ion-item>
+        
+      </ion-list>
+    </ion-content>
+    
+  </ion-menu>
+  
+  <!-- Conteúdo Principal -->
+  <ion-router-outlet id="main-content"></ion-router-outlet>
+  
 </ion-app>

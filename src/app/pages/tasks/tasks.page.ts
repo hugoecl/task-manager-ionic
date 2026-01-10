@@ -1,6 +1,6 @@
 /**
  * Página de Gestão de Tarefas
- * Mostra e gere as tarefas de um projeto específico
+ * Mostra tarefas de um projeto específico OU todas as tarefas (tab)
  */
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -15,17 +15,29 @@ import { Project, Task } from '../../models';
   standalone: false
 })
 export class TasksPage implements OnInit {
-  /** ID do projeto */
+  /** ID do projeto (opcional - se vazio mostra todas) */
   projectId: string = '';
   
-  /** Projeto atual */
+  /** Projeto atual (se estiver a ver um projeto específico) */
   project: Project | null = null;
+  
+  /** Lista de projetos (para mostrar nomes) */
+  projects: Project[] = [];
   
   /** Lista de tarefas */
   tasks: Task[] = [];
   
+  /** Tarefas filtradas */
+  filteredTasks: Task[] = [];
+  
+  /** Filtro atual */
+  filter: 'all' | 'pending' | 'completed' | 'overdue' = 'all';
+  
   /** Modo de reordenação */
   reorderEnabled = false;
+  
+  /** Modo: tab (todas) ou projeto específico */
+  isTabMode = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -38,7 +50,8 @@ export class TasksPage implements OnInit {
 
   async ngOnInit(): Promise<void> {
     this.route.params.subscribe(async params => {
-      this.projectId = params['projectId'];
+      this.projectId = params['projectId'] || '';
+      this.isTabMode = !this.projectId;
       await this.loadData();
     });
   }
@@ -54,10 +67,61 @@ export class TasksPage implements OnInit {
    * Carrega projeto e tarefas
    */
   async loadData(): Promise<void> {
+    // Carregar todos os projetos (para nomes)
+    this.projects = await this.projectService.getAll();
+    
     if (this.projectId) {
+      // Modo: projeto específico
       this.project = await this.projectService.getById(this.projectId) || null;
       this.tasks = await this.taskService.getByProject(this.projectId);
+    } else {
+      // Modo: todas as tarefas (tab)
+      this.tasks = await this.taskService.getAll();
     }
+    
+    this.applyFilter();
+  }
+
+  /**
+   * Aplica o filtro selecionado
+   */
+  applyFilter(): void {
+    switch (this.filter) {
+      case 'pending':
+        this.filteredTasks = this.tasks.filter(t => !t.completed);
+        break;
+      case 'completed':
+        this.filteredTasks = this.tasks.filter(t => t.completed);
+        break;
+      case 'overdue':
+        this.filteredTasks = this.tasks.filter(t => this.isOverdue(t));
+        break;
+      default:
+        this.filteredTasks = [...this.tasks];
+    }
+    
+    // Ordenar: em atraso primeiro, depois por data
+    this.filteredTasks.sort((a, b) => {
+      if (this.isOverdue(a) && !this.isOverdue(b)) return -1;
+      if (!this.isOverdue(a) && this.isOverdue(b)) return 1;
+      return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
+    });
+  }
+
+  /**
+   * Muda o filtro
+   */
+  setFilter(filter: 'all' | 'pending' | 'completed' | 'overdue'): void {
+    this.filter = filter;
+    this.applyFilter();
+  }
+
+  /**
+   * Obtém nome do projeto
+   */
+  getProjectName(projectId: string): string {
+    const project = this.projects.find(p => p.id === projectId);
+    return project ? project.name : '';
   }
 
   /**
@@ -109,6 +173,49 @@ export class TasksPage implements OnInit {
    * Abre modal para criar nova tarefa
    */
   async addTask(): Promise<void> {
+    // Se estamos no modo tab, primeiro escolher projeto
+    if (this.isTabMode && this.projects.length > 0) {
+      await this.selectProjectAndAddTask();
+      return;
+    }
+    
+    await this.createTask(this.projectId);
+  }
+
+  /**
+   * Seleciona projeto e depois cria tarefa
+   */
+  async selectProjectAndAddTask(): Promise<void> {
+    const inputs = this.projects.map((p, index) => ({
+      name: 'project',
+      type: 'radio' as const,
+      label: p.name,
+      value: p.id,
+      checked: index === 0
+    }));
+
+    const alert = await this.alertController.create({
+      header: 'Selecionar Projeto',
+      inputs: inputs,
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Continuar',
+          handler: async (projectId) => {
+            if (projectId) {
+              await this.createTask(projectId);
+            }
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  /**
+   * Cria uma nova tarefa
+   */
+  async createTask(projectId: string): Promise<void> {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     const defaultDate = tomorrow.toISOString().split('T')[0];
@@ -153,10 +260,7 @@ export class TasksPage implements OnInit {
         }
       ],
       buttons: [
-        {
-          text: 'Cancelar',
-          role: 'cancel'
-        },
+        { text: 'Cancelar', role: 'cancel' },
         {
           text: 'Criar',
           handler: async (data) => {
@@ -165,7 +269,7 @@ export class TasksPage implements OnInit {
                 title: data.title.trim(),
                 description: data.description?.trim() || '',
                 dueDate: new Date(data.dueDate),
-                projectId: this.projectId,
+                projectId: projectId,
                 completed: false,
                 priority: data.priority || 'medium'
               });
@@ -176,7 +280,6 @@ export class TasksPage implements OnInit {
         }
       ]
     });
-
     await alert.present();
   }
 
@@ -197,10 +300,7 @@ export class TasksPage implements OnInit {
       header: 'Eliminar Tarefa',
       message: `Tens a certeza que queres eliminar a tarefa "${task.title}"?`,
       buttons: [
-        {
-          text: 'Cancelar',
-          role: 'cancel'
-        },
+        { text: 'Cancelar', role: 'cancel' },
         {
           text: 'Eliminar',
           cssClass: 'danger',
@@ -212,7 +312,6 @@ export class TasksPage implements OnInit {
         }
       ]
     });
-
     await alert.present();
   }
 
@@ -227,15 +326,14 @@ export class TasksPage implements OnInit {
    * Handler para reordenação de tarefas
    */
   async handleReorder(event: CustomEvent<ItemReorderEventDetail>): Promise<void> {
-    // Reordenar array localmente
-    const movedItem = this.tasks.splice(event.detail.from, 1)[0];
-    this.tasks.splice(event.detail.to, 0, movedItem);
+    const movedItem = this.filteredTasks.splice(event.detail.from, 1)[0];
+    this.filteredTasks.splice(event.detail.to, 0, movedItem);
     
-    // Guardar nova ordem
-    const taskIds = this.tasks.map(t => t.id);
-    await this.taskService.reorder(this.projectId, taskIds);
+    if (this.projectId) {
+      const taskIds = this.filteredTasks.map(t => t.id);
+      await this.taskService.reorder(this.projectId, taskIds);
+    }
     
-    // Completar animação
     event.detail.complete();
   }
 

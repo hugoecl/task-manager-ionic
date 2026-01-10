@@ -3,6 +3,25 @@
  * Design moderno com gradiente e animações
  */
 
+/* Header transparente */
+.welcome-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+
+  ion-toolbar {
+    --background: transparent;
+    --border-width: 0;
+  }
+
+  ion-menu-button {
+    --color: #ffffff;
+    font-size: 28px;
+  }
+}
+
 /* Content principal */
 .welcome-content {
   --background: transparent;

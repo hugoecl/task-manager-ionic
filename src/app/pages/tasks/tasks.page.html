@@ -1,106 +1,123 @@
-<!-- Página de Tarefas de um Projeto -->
+<!-- Página de Tarefas -->
 <ion-header [translucent]="true">
   <ion-toolbar color="primary">
+    <!-- Botão voltar (modo projeto) ou menu (modo tab) -->
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/projects"></ion-back-button>
+      <ion-back-button *ngIf="!isTabMode" defaultHref="/tabs/projects"></ion-back-button>
+      <ion-menu-button *ngIf="isTabMode"></ion-menu-button>
     </ion-buttons>
-    <ion-title>{{ project?.name || 'Tarefas' }}</ion-title>
+    
+    <ion-title>{{ isTabMode ? 'Tarefas' : project?.name }}</ion-title>
+    
     <ion-buttons slot="end">
-      <ion-button (click)="toggleReorder()" [color]="reorderEnabled ? 'warning' : ''">
-        <ion-icon slot="icon-only" name="reorder-four-outline"></ion-icon>
-      </ion-button>
-      <ion-button (click)="addTask()">
-        <ion-icon slot="icon-only" name="add-outline"></ion-icon>
+      <ion-button *ngIf="!isTabMode" (click)="toggleReorder()">
+        <ion-icon slot="icon-only" [name]="reorderEnabled ? 'checkmark-outline' : 'reorder-three-outline'"></ion-icon>
       </ion-button>
     </ion-buttons>
+  </ion-toolbar>
+  
+  <!-- Filtros (modo tab) -->
+  <ion-toolbar *ngIf="isTabMode" color="primary">
+    <ion-segment [(ngModel)]="filter" (ionChange)="applyFilter()">
+      <ion-segment-button value="all">
+        <ion-label>Todas</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="pending">
+        <ion-label>Pendentes</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="overdue">
+        <ion-label>Atraso</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="completed">
+        <ion-label>Feitas</ion-label>
+      </ion-segment-button>
+    </ion-segment>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <!-- Header colapsável -->
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">{{ project?.name || 'Tarefas' }}</ion-title>
-    </ion-toolbar>
-  </ion-header>
-
-  <!-- Descrição do projeto -->
-  <div class="project-description" *ngIf="project?.description">
-    <ion-icon name="information-circle-outline"></ion-icon>
-    <span>{{ project?.description }}</span>
+  
+  <!-- Descrição do projeto (modo projeto) -->
+  <div class="project-info" *ngIf="!isTabMode && project?.description">
+    <p>{{ project?.description }}</p>
   </div>
 
-  <!-- Lista de Tarefas -->
-  <ion-list *ngIf="tasks.length > 0">
+  <!-- Contador de tarefas -->
+  <div class="task-counter">
+    <span *ngIf="filter === 'all'">{{ filteredTasks.length }} tarefa(s)</span>
+    <span *ngIf="filter === 'pending'">{{ filteredTasks.length }} pendente(s)</span>
+    <span *ngIf="filter === 'overdue'">{{ filteredTasks.length }} em atraso</span>
+    <span *ngIf="filter === 'completed'">{{ filteredTasks.length }} concluída(s)</span>
+  </div>
+
+  <!-- Lista de tarefas -->
+  <ion-list lines="none" *ngIf="filteredTasks.length > 0">
     <ion-reorder-group [disabled]="!reorderEnabled" (ionItemReorder)="handleReorder($event)">
-      <ion-item-sliding *ngFor="let task of tasks">
-        <ion-item [class.completed]="task.completed" [class.overdue]="isOverdue(task)" (click)="goToTaskDetail(task.id)" button>
-          <!-- Checkbox de conclusão -->
-          <ion-checkbox 
-            slot="start" 
-            [checked]="task.completed" 
-            (ionChange)="toggleComplete(task)"
-            (click)="$event.stopPropagation()">
+      
+      <ion-item-sliding *ngFor="let task of filteredTasks">
+        <ion-item button (click)="goToTaskDetail(task.id)" 
+                  [class.overdue]="isOverdue(task)"
+                  [class.completed]="task.completed"
+                  [class.today]="isDueToday(task)">
+          
+          <!-- Checkbox -->
+          <ion-checkbox slot="start" 
+                        [checked]="task.completed" 
+                        (click)="$event.stopPropagation()"
+                        (ionChange)="toggleComplete(task)">
           </ion-checkbox>
           
+          <!-- Info da tarefa -->
           <ion-label>
             <h2 [class.strikethrough]="task.completed">{{ task.title }}</h2>
-            <p *ngIf="task.description" class="task-description">{{ task.description }}</p>
-            <div class="task-meta">
-              <!-- Data limite -->
-              <span class="due-date" [class.overdue]="isOverdue(task)" [class.today]="isDueToday(task)">
-                <ion-icon name="calendar-outline"></ion-icon>
-                {{ task.dueDate | date:'dd/MM/yyyy' }}
-                <span *ngIf="isDueToday(task)">(Hoje)</span>
-              </span>
-              <!-- Prioridade -->
-              <ion-badge [color]="getPriorityColor(task.priority)">
-                {{ task.priority === 'high' ? 'Alta' : task.priority === 'medium' ? 'Média' : 'Baixa' }}
-              </ion-badge>
-            </div>
+            <p *ngIf="isTabMode && getProjectName(task.projectId)">
+              <ion-icon name="folder-outline"></ion-icon>
+              {{ getProjectName(task.projectId) }}
+            </p>
+            <p>
+              <ion-icon name="calendar-outline"></ion-icon>
+              {{ task.dueDate | date:'dd/MM/yyyy' }}
+              <span *ngIf="isOverdue(task)" class="overdue-badge">Em atraso</span>
+              <span *ngIf="isDueToday(task)" class="today-badge">Hoje</span>
+            </p>
           </ion-label>
-
-          <!-- Indicador de imagem -->
-          <ion-icon *ngIf="task.imageUrl" name="image-outline" slot="end" color="medium"></ion-icon>
+          
+          <!-- Prioridade -->
+          <ion-badge slot="end" [color]="getPriorityColor(task.priority)">
+            {{ task.priority === 'high' ? 'Alta' : task.priority === 'medium' ? 'Média' : 'Baixa' }}
+          </ion-badge>
           
           <!-- Reorder handle -->
-          <ion-reorder slot="end"></ion-reorder>
+          <ion-reorder slot="end" *ngIf="reorderEnabled"></ion-reorder>
         </ion-item>
-
+        
         <!-- Opções de slide -->
         <ion-item-options side="end">
-          <ion-item-option color="primary" (click)="goToTaskDetail(task.id)">
-            <ion-icon slot="icon-only" name="create-outline"></ion-icon>
-          </ion-item-option>
           <ion-item-option color="danger" (click)="deleteTask(task, $event)">
             <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
           </ion-item-option>
         </ion-item-options>
       </ion-item-sliding>
+      
     </ion-reorder-group>
   </ion-list>
 
-  <!-- Dica de reordenação -->
-  <div class="reorder-hint" *ngIf="reorderEnabled && tasks.length > 1">
-    <ion-icon name="information-circle-outline"></ion-icon>
-    <span>Arrasta as tarefas para reordenar</span>
-  </div>
-
   <!-- Estado vazio -->
-  <div class="empty-state" *ngIf="tasks.length === 0">
+  <div class="empty-state" *ngIf="filteredTasks.length === 0">
     <ion-icon name="checkbox-outline"></ion-icon>
-    <h2>Sem Tarefas</h2>
-    <p>Este projeto ainda não tem tarefas. Cria a primeira!</p>
-    <ion-button (click)="addTask()">
-      <ion-icon slot="start" name="add-outline"></ion-icon>
-      Nova Tarefa
-    </ion-button>
+    <h3 *ngIf="filter === 'all'">Sem tarefas</h3>
+    <h3 *ngIf="filter === 'pending'">Nenhuma tarefa pendente</h3>
+    <h3 *ngIf="filter === 'overdue'">Nenhuma tarefa em atraso</h3>
+    <h3 *ngIf="filter === 'completed'">Nenhuma tarefa concluída</h3>
+    <p *ngIf="filter === 'all'">Clica no + para criar uma nova tarefa</p>
+    <p *ngIf="filter === 'overdue'">Boa! Estás em dia! 🎉</p>
   </div>
 
-  <!-- FAB -->
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+  <!-- FAB para adicionar -->
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
     <ion-fab-button (click)="addTask()">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
   </ion-fab>
+
 </ion-content>

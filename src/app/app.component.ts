@@ -1,8 +1,9 @@
 /**
  * Componente Principal da Aplicação
- * Inicializa os dados quando a app arranca
+ * Inicializa os dados e gere o side menu
  */
 import { Component, OnInit } from '@angular/core';
+import { MenuController } from '@ionic/angular';
 import { DataInitService } from './services';
 
 @Component({
@@ -13,12 +14,22 @@ import { DataInitService } from './services';
 })
 export class AppComponent implements OnInit {
   
-  constructor(private dataInitService: DataInitService) {}
+  constructor(
+    private menuController: MenuController,
+    private dataInitService: DataInitService
+  ) {}
 
   /**
    * Inicializa os dados da aplicação quando arranca
    */
   async ngOnInit(): Promise<void> {
     await this.dataInitService.initialize();
+  }
+
+  /**
+   * Fecha o side menu
+   */
+  closeMenu(): void {
+    this.menuController.close('main-menu');
   }
 }

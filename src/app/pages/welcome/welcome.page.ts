@@ -16,10 +16,10 @@ export class WelcomePage {
   constructor(private router: Router) { }
 
   /**
-   * Navega para a página principal (dashboard)
+   * Navega para a página principal (tabs)
    */
   goToApp(): void {
-    this.router.navigate(['/home']);
+    this.router.navigate(['/tabs/home']);
   }
 
   /**

@@ -12,45 +12,59 @@ const routes: Routes = [
     redirectTo: 'welcome',
     pathMatch: 'full'
   },
-  // Página de boas-vindas (landing page)
+  // Página de boas-vindas (SEM tabs)
   {
     path: 'welcome',
     loadChildren: () => import('./pages/welcome/welcome.module').then(m => m.WelcomePageModule)
   },
-  // Página principal (dashboard)
+  // Tabs (navegação principal COM tabs)
   {
-    path: 'home',
-    loadChildren: () => import('./home/home.module').then(m => m.HomePageModule)
+    path: 'tabs',
+    loadChildren: () => import('./pages/tabs/tabs.module').then(m => m.TabsPageModule)
   },
-  // Gestão de categorias
+  // Página Sobre (acessível via side menu)
   {
-    path: 'categories',
-    loadChildren: () => import('./pages/categories/categories.module').then(m => m.CategoriesPageModule)
+    path: 'about',
+    loadChildren: () => import('./pages/about/about.module').then(m => m.AboutPageModule)
   },
-  // Lista de projetos (pode filtrar por categoria)
+  // Página Perguntas/FAQ (acessível via side menu)
   {
-    path: 'projects',
-    loadChildren: () => import('./pages/projects/projects.module').then(m => m.ProjectsPageModule)
+    path: 'faq',
+    loadChildren: () => import('./pages/faq/faq.module').then(m => m.FaqPageModule)
   },
-  // Projetos filtrados por categoria específica
-  {
-    path: 'projects/category/:categoryId',
-    loadChildren: () => import('./pages/projects/projects.module').then(m => m.ProjectsPageModule)
-  },
-  // Lista de tarefas de um projeto específico
+  // Rotas de detalhe (fora das tabs mas acessíveis)
   {
     path: 'tasks/:projectId',
     loadChildren: () => import('./pages/tasks/tasks.module').then(m => m.TasksPageModule)
   },
-  // Detalhes de uma tarefa específica
   {
     path: 'task-detail/:taskId',
     loadChildren: () => import('./pages/task-detail/task-detail.module').then(m => m.TaskDetailPageModule)
   },
-  // Calendário com datas limite das tarefas
+  {
+    path: 'projects/category/:categoryId',
+    loadChildren: () => import('./pages/projects/projects.module').then(m => m.ProjectsPageModule)
+  },
+  // Fallback - redireciona rotas antigas para tabs
+  {
+    path: 'home',
+    redirectTo: 'tabs/home',
+    pathMatch: 'full'
+  },
+  {
+    path: 'projects',
+    redirectTo: 'tabs/projects',
+    pathMatch: 'full'
+  },
   {
     path: 'calendar',
-    loadChildren: () => import('./pages/calendar/calendar.module').then(m => m.CalendarPageModule)
+    redirectTo: 'tabs/calendar',
+    pathMatch: 'full'
+  },
+  {
+    path: 'categories',
+    redirectTo: 'tabs/categories',
+    pathMatch: 'full'
   },
 ];
 
