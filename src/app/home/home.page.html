@@ -1,20 +1,131 @@
+<!-- Página Principal - Dashboard -->
 <ion-header [translucent]="true">
-  <ion-toolbar>
+  <ion-toolbar color="primary">
     <ion-title>
-      Blank
+      <ion-icon name="checkmark-done-outline"></ion-icon>
+      Task Manager
     </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="goToCalendar()">
+        <ion-icon slot="icon-only" name="calendar-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
+  <!-- Header colapsável para iOS -->
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
+      <ion-title size="large">Task Manager</ion-title>
     </ion-toolbar>
   </ion-header>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+  <!-- Secção de Estatísticas -->
+  <div class="stats-container">
+    <div class="stat-card">
+      <ion-icon name="folder-outline" color="primary"></ion-icon>
+      <div class="stat-info">
+        <span class="stat-value">{{ totalProjects }}</span>
+        <span class="stat-label">Projetos</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <ion-icon name="checkbox-outline" color="success"></ion-icon>
+      <div class="stat-info">
+        <span class="stat-value">{{ completedTasks }}/{{ totalTasks }}</span>
+        <span class="stat-label">Concluídas</span>
+      </div>
+    </div>
+    <div class="stat-card" [class.has-overdue]="overdueTasks.length > 0">
+      <ion-icon name="warning-outline" [color]="overdueTasks.length > 0 ? 'danger' : 'medium'"></ion-icon>
+      <div class="stat-info">
+        <span class="stat-value">{{ overdueTasks.length }}</span>
+        <span class="stat-label">Em Atraso</span>
+      </div>
+    </div>
   </div>
+
+  <!-- Tarefas em Atraso -->
+  <ion-card *ngIf="overdueTasks.length > 0" class="overdue-card">
+    <ion-card-header>
+      <ion-card-title color="danger">
+        <ion-icon name="alert-circle-outline"></ion-icon>
+        Tarefas em Atraso
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list lines="none">
+        <ion-item *ngFor="let task of overdueTasks" (click)="goToTask(task.id)" button>
+          <ion-icon name="time-outline" slot="start" color="danger"></ion-icon>
+          <ion-label>
+            <h3>{{ task.title }}</h3>
+            <p>Venceu em {{ task.dueDate | date:'dd/MM/yyyy' }}</p>
+          </ion-label>
+          <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Categorias -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="pricetags-outline"></ion-icon>
+        Categorias
+      </ion-card-title>
+      <ion-button fill="clear" size="small" (click)="goToCategories()">
+        Gerir
+        <ion-icon name="settings-outline" slot="end"></ion-icon>
+      </ion-button>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="categories-grid">
+        <div 
+          *ngFor="let category of categories" 
+          class="category-item"
+          [style.borderColor]="category.color"
+          (click)="goToProjects(category.id)">
+          <ion-icon [name]="category.icon" [style.color]="category.color"></ion-icon>
+          <span>{{ category.name }}</span>
+        </div>
+        <!-- Botão para ver todos os projetos -->
+        <div class="category-item all-projects" (click)="goToProjects()">
+          <ion-icon name="albums-outline"></ion-icon>
+          <span>Todos</span>
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Menu de Acesso Rápido -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="flash-outline"></ion-icon>
+        Acesso Rápido
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list lines="none">
+        <ion-item button (click)="goToProjects()">
+          <ion-icon name="folder-open-outline" slot="start" color="primary"></ion-icon>
+          <ion-label>Ver Todos os Projetos</ion-label>
+          <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+        </ion-item>
+        <ion-item button (click)="goToCalendar()">
+          <ion-icon name="calendar-outline" slot="start" color="tertiary"></ion-icon>
+          <ion-label>Calendário de Tarefas</ion-label>
+          <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+        </ion-item>
+        <ion-item button (click)="goToCategories()">
+          <ion-icon name="pricetags-outline" slot="start" color="secondary"></ion-icon>
+          <ion-label>Gerir Categorias</ion-label>
+          <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
 </ion-content>
