@@ -1,0 +1,94 @@
+{
+  "categories": [
+    {
+      "id": "cat-1",
+      "name": "Escola",
+      "color": "#4CAF50",
+      "icon": "school-outline",
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "cat-2",
+      "name": "Trabalho",
+      "color": "#2196F3",
+      "icon": "briefcase-outline",
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "cat-3",
+      "name": "Pessoal",
+      "color": "#9C27B0",
+      "icon": "person-outline",
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    }
+  ],
+  "projects": [
+    {
+      "id": "proj-1",
+      "name": "Projeto PMeU",
+      "description": "Trabalho prático de Programação Móvel e Ubíqua",
+      "categoryId": "cat-1",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "proj-2",
+      "name": "Relatório Anual",
+      "description": "Preparar relatório anual da empresa",
+      "categoryId": "cat-2",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task-1",
+      "title": "Criar estrutura do projeto",
+      "description": "Configurar Ionic, Angular e estrutura de pastas",
+      "dueDate": "2026-01-10T23:59:00.000Z",
+      "projectId": "proj-1",
+      "completed": true,
+      "priority": "high",
+      "order": 1,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "task-2",
+      "title": "Implementar CRUD de tarefas",
+      "description": "Criar, editar, eliminar e listar tarefas",
+      "dueDate": "2026-01-11T23:59:00.000Z",
+      "projectId": "proj-1",
+      "completed": false,
+      "priority": "high",
+      "order": 2,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "task-3",
+      "title": "Implementar calendário",
+      "description": "Mostrar tarefas no calendário",
+      "dueDate": "2026-01-12T23:59:00.000Z",
+      "projectId": "proj-1",
+      "completed": false,
+      "priority": "medium",
+      "order": 3,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "task-4",
+      "title": "Reunião com equipa",
+      "description": "Discutir metas do trimestre",
+      "dueDate": "2026-01-08T10:00:00.000Z",
+      "projectId": "proj-2",
+      "completed": false,
+      "priority": "high",
+      "order": 1,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    }
+  ]
+}
+
