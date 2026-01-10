@@ -15,16 +15,10 @@ export class WelcomePage {
 
   constructor(private router: Router) { }
 
-  /**
-   * Navega para a página principal (tabs)
-   */
   goToApp(): void {
     this.router.navigate(['/tabs/home']);
   }
 
-  /**
-   * Navega para o calendário
-   */
   goToCalendar(): void {
     this.router.navigate(['/calendar']);
   }

@@ -1,50 +1,79 @@
 <!-- Página de Perguntas Frequentes -->
 <ion-header [translucent]="true">
-  <ion-toolbar color="primary">
+  <ion-toolbar color="tertiary">
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/tabs/home"></ion-back-button>
     </ion-buttons>
-    <ion-title>Perguntas</ion-title>
+    <ion-title>Ajuda</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  
+<ion-content [fullscreen]="true" class="faq-content">
+
   <!-- Header -->
   <div class="faq-header">
-    <ion-icon name="help-circle-outline"></ion-icon>
-    <h2>Perguntas Frequentes</h2>
+    <div class="header-icon">
+      <ion-icon name="help-circle-outline"></ion-icon>
+    </div>
+    <h1>Perguntas Frequentes</h1>
     <p>Encontra respostas às dúvidas mais comuns</p>
   </div>
 
   <!-- Lista de FAQs -->
-  <ion-accordion-group>
-    <ion-accordion *ngFor="let faq of faqs; let i = index" [value]="'faq-' + i">
-      <ion-item slot="header" color="light">
-        <ion-icon name="help-outline" slot="start" color="primary"></ion-icon>
-        <ion-label class="question">{{ faq.question }}</ion-label>
-      </ion-item>
-      <div class="answer" slot="content">
-        <p>{{ faq.answer }}</p>
-      </div>
-    </ion-accordion>
-  </ion-accordion-group>
+  <div class="faq-list">
+    <ion-accordion-group>
+      <ion-accordion *ngFor="let faq of faqs; let i = index" [value]="'faq-' + i">
+        <ion-item slot="header">
+          <div class="faq-question">
+            <ion-icon name="help-outline" color="tertiary"></ion-icon>
+            <span>{{ faq.question }}</span>
+          </div>
+        </ion-item>
+        <div class="faq-answer" slot="content">
+          <p>{{ faq.answer }}</p>
+        </div>
+      </ion-accordion>
+    </ion-accordion-group>
+  </div>
 
-  <!-- Contacto -->
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>
-        <ion-icon name="mail-outline"></ion-icon>
-        Ainda tens dúvidas?
-      </ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <p>Se não encontraste a resposta que procuravas, contacta o suporte.</p>
-      <ion-button expand="block" fill="outline">
-        <ion-icon slot="start" name="mail-outline"></ion-icon>
-        Enviar Email
-      </ion-button>
-    </ion-card-content>
-  </ion-card>
+  <!-- Dicas Rápidas -->
+  <div class="tips-section">
+    <div class="section-header">
+      <ion-icon name="bulb-outline"></ion-icon>
+      <h2>Dicas Rápidas</h2>
+    </div>
+    
+    <div class="tips-list">
+      <div class="tip-item">
+        <div class="tip-icon">
+          <ion-icon name="swap-horizontal-outline"></ion-icon>
+        </div>
+        <div class="tip-text">
+          <h3>Desliza para opções</h3>
+          <p>Desliza um item para a esquerda para ver opções</p>
+        </div>
+      </div>
+      
+      <div class="tip-item">
+        <div class="tip-icon">
+          <ion-icon name="reorder-three-outline"></ion-icon>
+        </div>
+        <div class="tip-text">
+          <h3>Reordena tarefas</h3>
+          <p>Usa o botão de reordenação para arrastar</p>
+        </div>
+      </div>
+      
+      <div class="tip-item">
+        <div class="tip-icon">
+          <ion-icon name="calendar-outline"></ion-icon>
+        </div>
+        <div class="tip-text">
+          <h3>Usa o calendário</h3>
+          <p>Mostra tarefas com cores por estado</p>
+        </div>
+      </div>
+    </div>
+  </div>
 
 </ion-content>

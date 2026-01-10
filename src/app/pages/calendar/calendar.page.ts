@@ -1,7 +1,6 @@
 /**
  * Página de Calendário
  * Mostra as datas limite das tarefas num calendário
- * Permite visualizar e editar tarefas ao selecionar uma data
  */
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
@@ -15,19 +14,10 @@ import { Task, Project } from '../../models';
   standalone: false
 })
 export class CalendarPage implements OnInit {
-  /** Data selecionada */
   selectedDate: string = new Date().toISOString();
-  
-  /** Tarefas da data selecionada */
   tasksForDate: Task[] = [];
-  
-  /** Todas as tarefas (para marcar datas) */
   allTasks: Task[] = [];
-  
-  /** Projetos (para mostrar nome) */
   projects: Map<string, Project> = new Map();
-  
-  /** Datas que têm tarefas (para destacar no calendário) */
   highlightedDates: { date: string; textColor: string; backgroundColor: string }[] = [];
 
   constructor(
@@ -40,35 +30,21 @@ export class CalendarPage implements OnInit {
     await this.loadData();
   }
 
-  /**
-   * Recarrega dados quando a página fica visível
-   */
   async ionViewWillEnter(): Promise<void> {
     await this.loadData();
   }
 
-  /**
-   * Carrega todas as tarefas e projetos
-   */
   async loadData(): Promise<void> {
-    // Carregar tarefas
     this.allTasks = await this.taskService.getAll();
     
-    // Carregar projetos
     const projectsList = await this.projectService.getAll();
     this.projects.clear();
-    projectsList.forEach(proj => this.projects.set(proj.id, proj));
+    projectsList.forEach((proj: Project) => this.projects.set(proj.id, proj));
     
-    // Preparar datas destacadas
     this.prepareHighlightedDates();
-    
-    // Carregar tarefas da data selecionada
     await this.loadTasksForSelectedDate();
   }
 
-  /**
-   * Prepara as datas a destacar no calendário
-   */
   prepareHighlightedDates(): void {
     const dateMap = new Map<string, { completed: number; pending: number; overdue: number }>();
     const now = new Date();
@@ -93,39 +69,40 @@ export class CalendarPage implements OnInit {
       }
     });
 
-    this.highlightedDates = Array.from(dateMap.entries()).map(([dateStr, counts]) => {
-      let backgroundColor = '';
-      let textColor = '#ffffff';
+    this.highlightedDates = Array.from(dateMap.entries())
+      .map(([dateStr, counts]) => {
+        let backgroundColor = '';
+        let textColor = '#ffffff';
 
-      if (counts.overdue > 0) {
-        backgroundColor = '#eb445a'; // danger
-      } else if (counts.pending > 0) {
-        backgroundColor = '#3880ff'; // primary
-      } else {
-        backgroundColor = '#2dd36f'; // success
-        textColor = '#000000';
-      }
+        // Prioriza: Atraso > Pendentes > Apenas Concluídas
+        if (counts.overdue > 0) {
+          backgroundColor = '#B8550A'; // Laranja-vermelho bem escuro para atraso (bem distinto)
+        } else if (counts.pending > 0) {
+          backgroundColor = '#E68A2E'; // Laranja suave para pendentes
+        } else if (counts.completed > 0 && counts.pending === 0 && counts.overdue === 0) {
+          backgroundColor = '#4CAF50'; // Verde apenas se SÓ houver tarefas concluídas (sem pendentes ou atraso)
+          textColor = '#ffffff';
+        }
 
-      return { date: dateStr, textColor, backgroundColor };
-    });
+        // Só retorna se houver uma cor definida
+        if (backgroundColor) {
+          return { date: dateStr, textColor, backgroundColor };
+        }
+        
+        return null;
+      })
+      .filter((item): item is { date: string; textColor: string; backgroundColor: string } => item !== null);
   }
 
-  /**
-   * Handler para mudança de data no calendário
-   */
   async onDateChange(event: any): Promise<void> {
     this.selectedDate = event.detail.value;
     await this.loadTasksForSelectedDate();
   }
 
-  /**
-   * Carrega tarefas para a data selecionada
-   */
   async loadTasksForSelectedDate(): Promise<void> {
     const selectedDateObj = new Date(this.selectedDate);
     this.tasksForDate = await this.taskService.getByDate(selectedDateObj);
     
-    // Ordenar: em atraso primeiro, depois pendentes, depois concluídas
     this.tasksForDate.sort((a, b) => {
       if (a.completed !== b.completed) return a.completed ? 1 : -1;
       if (this.isOverdue(a) !== this.isOverdue(b)) return this.isOverdue(a) ? -1 : 1;
@@ -133,9 +110,6 @@ export class CalendarPage implements OnInit {
     });
   }
 
-  /**
-   * Verifica se uma tarefa está em atraso
-   */
   isOverdue(task: Task): boolean {
     if (task.completed) return false;
     const now = new Date();
@@ -145,16 +119,10 @@ export class CalendarPage implements OnInit {
     return dueDate < now;
   }
 
-  /**
-   * Obtém nome do projeto
-   */
   getProjectName(projectId: string): string {
     return this.projects.get(projectId)?.name || 'Projeto desconhecido';
   }
 
-  /**
-   * Obtém cor da prioridade
-   */
   getPriorityColor(priority: string): string {
     switch (priority) {
       case 'high': return 'danger';
@@ -164,16 +132,10 @@ export class CalendarPage implements OnInit {
     }
   }
 
-  /**
-   * Navega para detalhes da tarefa
-   */
   goToTaskDetail(taskId: string): void {
     this.router.navigate(['/task-detail', taskId]);
   }
 
-  /**
-   * Formata a data selecionada para exibição
-   */
   getFormattedSelectedDate(): string {
     const date = new Date(this.selectedDate);
     const today = new Date();
@@ -203,9 +165,6 @@ export class CalendarPage implements OnInit {
     });
   }
 
-  /**
-   * Conta tarefas por estado
-   */
   getTaskStats(): { total: number; completed: number; pending: number; overdue: number } {
     const stats = { total: 0, completed: 0, pending: 0, overdue: 0 };
     stats.total = this.tasksForDate.length;

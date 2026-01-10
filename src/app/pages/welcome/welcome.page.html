@@ -1,8 +1,8 @@
 <!-- Página de Boas-Vindas -->
 
-<!-- Botão do Menu (flutuante) -->
+<!-- Header com botão de menu -->
 <ion-header class="welcome-header">
-  <ion-toolbar color="transparent">
+  <ion-toolbar>
     <ion-buttons slot="start">
       <ion-menu-button color="light"></ion-menu-button>
     </ion-buttons>
@@ -11,58 +11,72 @@
 
 <ion-content [fullscreen]="true" class="welcome-content">
   
-  <!-- Background com gradiente -->
+  <!-- Background -->
   <div class="background-gradient"></div>
+  <div class="background-shapes">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+  </div>
   
   <!-- Conteúdo principal -->
   <div class="welcome-container">
     
-    <!-- Logo/Ícone -->
-    <div class="logo-container">
-      <ion-icon name="checkmark-done-circle-outline"></ion-icon>
+    <!-- Logo animado -->
+    <div class="logo-wrapper">
+      <div class="logo-circle">
+        <ion-icon name="checkmark-done-circle-outline"></ion-icon>
+      </div>
     </div>
 
-    <!-- Título principal -->
-    <h1 class="welcome-title">Task Manager</h1>
+    <!-- Título -->
+    <h1 class="app-title">Task Manager</h1>
     
     <!-- Subtítulo -->
-    <p class="welcome-subtitle">Organiza o teu dia</p>
+    <p class="app-subtitle">Organiza o teu dia</p>
     
     <!-- Descrição -->
-    <p class="welcome-description">
+    <p class="app-description">
       Gere as tuas tarefas por estado: 
-      <span class="highlight">A realizar</span>, 
-      <span class="highlight">Por fazer</span> e 
+      <span class="highlight">Pendentes</span>, 
+      <span class="highlight">Em atraso</span> e 
       <span class="highlight">Concluídas</span>.
     </p>
 
     <!-- Features -->
-    <div class="features">
-      <div class="feature-item">
-        <ion-icon name="folder-outline"></ion-icon>
+    <div class="features-row">
+      <div class="feature">
+        <div class="feature-icon">
+          <ion-icon name="checkbox-outline"></ion-icon>
+        </div>
+        <span>Tarefas</span>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">
+          <ion-icon name="folder-outline"></ion-icon>
+        </div>
         <span>Projetos</span>
       </div>
-      <div class="feature-item">
-        <ion-icon name="pricetags-outline"></ion-icon>
+      <div class="feature">
+        <div class="feature-icon">
+          <ion-icon name="pricetags-outline"></ion-icon>
+        </div>
         <span>Categorias</span>
       </div>
-      <div class="feature-item">
-        <ion-icon name="calendar-outline"></ion-icon>
+      <div class="feature">
+        <div class="feature-icon">
+          <ion-icon name="calendar-outline"></ion-icon>
+        </div>
         <span>Calendário</span>
       </div>
     </div>
 
-    <!-- Botão principal -->
-    <ion-button expand="block" class="start-button" (click)="goToApp()">
+    <!-- Botão de início -->
+    <ion-button class="start-btn" expand="block" (click)="goToApp()">
       <ion-icon slot="start" name="rocket-outline"></ion-icon>
       COMEÇAR
     </ion-button>
 
-  </div>
-
-  <!-- Versão -->
-  <div class="version">
-    <p>PMeU 2026 - Hugo Leite</p>
   </div>
 
 </ion-content>

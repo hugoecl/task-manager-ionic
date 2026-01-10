@@ -1,284 +1,348 @@
 /**
- * Estilos do Dashboard
- * Design limpo e profissional
+ * Dashboard - Tema Cinza Elegante com Laranja Suave
  */
 
-.dashboard-content {
-  --background: var(--ion-background-color);
+/* Hero Section */
+.hero-section {
+  padding: 20px 24px 30px;
+  text-align: center;
 }
 
-/* Saudação */
-.greeting-section {
-  padding: 24px 20px 16px;
-  
-  h1 {
-    font-size: 28px;
-    font-weight: 700;
-    margin: 0 0 4px 0;
-    color: var(--ion-text-color);
-  }
-  
-  p {
-    font-size: 14px;
-    color: var(--ion-color-medium);
-    margin: 0;
-    text-transform: capitalize;
-  }
+.hero-glow {
+  display: none;
 }
 
-/* Grid de Estatísticas */
-.stats-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+.hero-greeting {
+  font-size: 28px;
+  font-weight: 800;
+  color: #F7FAFC;
+  margin: 0 0 4px;
+}
+
+.hero-date {
+  font-size: 14px;
+  color: #A0AEC0;
+  margin: 0;
+  text-transform: capitalize;
+}
+
+/* Stats Row */
+.stats-row {
+  display: flex;
   gap: 12px;
   padding: 0 16px;
   margin-bottom: 20px;
 }
 
 .stat-card {
-  background: var(--ion-card-background);
+  flex: 1;
+  background: #3D4A5C;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 16px;
   padding: 16px;
+  text-align: center;
+  
+  .stat-number {
+    font-size: 26px;
+    font-weight: 800;
+    color: #F7FAFC;
+  }
+  
+  .stat-label {
+    font-size: 12px;
+    color: #A0AEC0;
+    margin-top: 4px;
+  }
+  
+  &.highlight {
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.2) 0%, rgba(76, 175, 80, 0.1) 100%);
+    border-color: rgba(76, 175, 80, 0.3);
+    
+    .stat-number {
+      color: #4CAF50;
+    }
+  }
+  
+  &.danger {
+    background: linear-gradient(135deg, rgba(212, 116, 15, 0.2) 0%, rgba(212, 116, 15, 0.1) 100%);
+    border-color: rgba(212, 116, 15, 0.4);
+    
+    .stat-number {
+      color: #D4740F;
+    }
+  }
+}
+
+/* Progress Section */
+.progress-section {
+  display: flex;
+  justify-content: center;
+  padding: 0 16px 24px;
+}
+
+.progress-ring {
+  position: relative;
+  width: 130px;
+  height: 130px;
+  
+  svg {
+    transform: rotate(-90deg);
+    width: 100%;
+    height: 100%;
+  }
+  
+  .progress-bg {
+    fill: none;
+    stroke: #4A5568;
+    stroke-width: 10;
+  }
+  
+  .progress-fill {
+    fill: none;
+    stroke: #3949AB;
+    stroke-width: 10;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.5s ease;
+  }
+  
+  .progress-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    
+    .progress-value {
+      display: block;
+      font-size: 28px;
+      font-weight: 800;
+      color: #F7FAFC;
+    }
+    
+    .progress-label {
+      display: block;
+      font-size: 11px;
+      color: #A0AEC0;
+    }
+  }
+}
+
+/* Alert Card */
+.alert-card {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
+  background: linear-gradient(135deg, rgba(212, 116, 15, 0.15) 0%, rgba(212, 116, 15, 0.08) 100%);
+  border: 1px solid rgba(212, 116, 15, 0.3);
+  border-radius: 16px;
+  padding: 14px 16px;
+  margin: 0 16px 20px;
+  cursor: pointer;
   
-  .stat-icon {
-    width: 48px;
-    height: 48px;
+  .alert-icon {
+    width: 42px;
+    height: 42px;
+    background: #D4740F;
     border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
     
     ion-icon {
-      font-size: 24px;
+      font-size: 22px;
       color: #fff;
     }
-    
-    &.primary {
-      background: linear-gradient(135deg, var(--ion-color-primary), var(--ion-color-primary-shade));
-    }
-    
-    &.danger {
-      background: linear-gradient(135deg, var(--ion-color-danger), var(--ion-color-danger-shade));
-    }
-    
-    &.success {
-      background: linear-gradient(135deg, var(--ion-color-success), var(--ion-color-success-shade));
-    }
   }
   
-  .stat-info {
-    display: flex;
-    flex-direction: column;
+  .alert-content {
+    flex: 1;
     
-    .stat-value {
-      font-size: 22px;
-      font-weight: 700;
-      color: var(--ion-text-color);
-      
-      &.danger {
-        color: var(--ion-color-danger);
-      }
-      
-      &.success {
-        color: var(--ion-color-success);
-      }
-    }
-    
-    .stat-label {
-      font-size: 12px;
-      color: var(--ion-color-medium);
-    }
-  }
-}
-
-/* Barra de Progresso */
-.progress-section {
-  padding: 0 16px;
-  margin-bottom: 24px;
-  
-  .progress-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 8px;
-    
-    span {
-      font-size: 14px;
-      color: var(--ion-color-medium);
-    }
-    
-    .progress-percent {
-      font-weight: 600;
-      color: var(--ion-color-primary);
-    }
-  }
-  
-  .progress-bar {
-    height: 8px;
-    background: var(--ion-color-light);
-    border-radius: 4px;
-    overflow: hidden;
-    
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--ion-color-primary), var(--ion-color-tertiary));
-      border-radius: 4px;
-      transition: width 0.5s ease;
-    }
-  }
-}
-
-/* Secções */
-.section {
-  margin-bottom: 24px;
-  
-  .section-header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 0 16px;
-    margin-bottom: 12px;
-    
-    ion-icon {
-      font-size: 20px;
-      color: var(--ion-color-primary);
-    }
-    
-    h2 {
-      font-size: 16px;
-      font-weight: 600;
-      margin: 0;
-      color: var(--ion-text-color);
-    }
-    
-    &.danger {
-      ion-icon {
-        color: var(--ion-color-danger);
-      }
-      
-      h2 {
-        color: var(--ion-color-danger);
-      }
-    }
-  }
-}
-
-/* Lista de Tarefas */
-.task-list {
-  background: transparent;
-  padding: 0 16px;
-  
-  .task-item {
-    --background: var(--ion-card-background);
-    --border-radius: 12px;
-    --padding-start: 16px;
-    --padding-end: 16px;
-    --inner-padding-end: 0;
-    margin-bottom: 8px;
-    
-    h3 {
+    .alert-title {
+      display: block;
       font-size: 15px;
       font-weight: 600;
-      margin: 0 0 4px 0;
+      color: #D4740F;
     }
     
-    p {
-      font-size: 13px;
-      color: var(--ion-color-medium);
-      margin: 0;
+    .alert-subtitle {
+      display: block;
+      font-size: 12px;
+      color: #A0AEC0;
+      margin-top: 2px;
     }
-    
-    &.overdue {
-      --background: rgba(var(--ion-color-danger-rgb), 0.1);
-      border-left: 3px solid var(--ion-color-danger);
-    }
-    
-    .task-date {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-width: 45px;
-      padding: 8px;
-      background: var(--ion-color-primary);
-      border-radius: 8px;
-      margin-right: 12px;
-      
-      .day {
-        font-size: 18px;
-        font-weight: 700;
-        color: #fff;
-        line-height: 1;
-      }
-      
-      .month {
-        font-size: 10px;
-        color: rgba(255, 255, 255, 0.8);
-        text-transform: uppercase;
-      }
-    }
-    
-    ion-badge {
-      font-size: 10px;
-      padding: 4px 8px;
-      border-radius: 8px;
-    }
+  }
+  
+  > ion-icon {
+    color: #D4740F;
+    font-size: 18px;
   }
 }
 
-/* Estado Vazio */
-.empty-state {
-  text-align: center;
-  padding: 48px 24px;
+/* Section */
+.section {
+  padding: 0 16px;
+  margin-bottom: 20px;
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #F7FAFC;
+  margin: 0 0 12px 4px;
+}
+
+/* Tasks Container */
+.tasks-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.task-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #3D4A5C;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 12px;
+  cursor: pointer;
+}
+
+.task-date-badge {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #3949AB;
   
-  ion-icon {
-    font-size: 64px;
-    color: var(--ion-color-medium);
-    margin-bottom: 16px;
+  .day {
+    font-size: 17px;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1;
+  }
+  
+  .month {
+    font-size: 9px;
+    color: rgba(255, 255, 255, 0.85);
+    text-transform: uppercase;
+  }
+  
+  &.warning {
+    background: #E68A2E;
+  }
+  
+  &.danger {
+    background: #D4740F;
+  }
+  
+  &.success {
+    background: #4CAF50;
+  }
+}
+
+.task-details {
+  flex: 1;
+  min-width: 0;
+  
+  .task-name {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #F7FAFC;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .task-project {
+    display: block;
+    font-size: 12px;
+    color: #A0AEC0;
+    margin-top: 2px;
+  }
+}
+
+.task-priority {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  
+  &.high { background: #D4740F; }
+  &.medium { background: #E68A2E; }
+  &.low { background: #4CAF50; }
+}
+
+/* Empty State */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 50px 24px;
+  text-align: center;
+  
+  .empty-icon {
+    width: 90px;
+    height: 90px;
+    background: #4A5568;
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    
+    ion-icon {
+      font-size: 42px;
+      color: #718096;
+    }
   }
   
   h3 {
     font-size: 20px;
-    font-weight: 600;
-    margin: 0 0 8px 0;
+    font-weight: 700;
+    color: #F7FAFC;
+    margin: 0 0 8px;
   }
   
   p {
     font-size: 14px;
-    color: var(--ion-color-medium);
-    margin: 0 0 24px 0;
-  }
-  
-  ion-button {
-    --border-radius: 24px;
+    color: #A0AEC0;
+    margin: 0 0 20px;
   }
 }
 
-/* Tudo em dia */
-.all-done {
+/* Success Card */
+.success-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.15) 0%, rgba(76, 175, 80, 0.08) 100%);
+  border: 1px solid rgba(76, 175, 80, 0.25);
+  border-radius: 18px;
+  padding: 28px;
+  margin: 0 16px;
   text-align: center;
-  padding: 32px 24px;
-  margin: 16px;
-  background: linear-gradient(135deg, rgba(var(--ion-color-success-rgb), 0.1), rgba(var(--ion-color-tertiary-rgb), 0.1));
-  border-radius: 16px;
   
-  ion-icon {
-    font-size: 48px;
-    color: var(--ion-color-success);
-    margin-bottom: 12px;
+  .success-icon {
+    font-size: 42px;
+    margin-bottom: 10px;
   }
   
   h3 {
     font-size: 18px;
-    font-weight: 600;
-    margin: 0 0 8px 0;
-    color: var(--ion-color-success);
+    font-weight: 700;
+    color: #4CAF50;
+    margin: 0 0 4px;
   }
   
   p {
-    font-size: 14px;
-    color: var(--ion-color-medium);
+    font-size: 13px;
+    color: #A0AEC0;
     margin: 0;
   }
 }

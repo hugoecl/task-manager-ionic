@@ -1,88 +1,162 @@
 /**
- * Estilos da Página de Perguntas Frequentes
+ * Página FAQ - Estilos
+ * Tema laranja suave para condizer com o resto do projeto
  */
 
-/* Header */
+.faq-content {
+  --background: var(--ion-background-color);
+}
+
 .faq-header {
+  background: linear-gradient(135deg, #D4740F 0%, #E68A2E 100%);
+  padding: 32px 20px;
   text-align: center;
-  padding: 32px 16px;
-  background: linear-gradient(135deg, var(--ion-color-primary), var(--ion-color-primary-shade));
-
-  ion-icon {
-    font-size: 60px;
-    color: #ffffff;
+  border-radius: 0 0 32px 32px;
+  margin-bottom: 24px;
+  
+  .header-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 16px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    ion-icon {
+      font-size: 48px;
+      color: #ffffff;
+    }
   }
-
-  h2 {
-    color: #ffffff;
+  
+  h1 {
     font-size: 24px;
     font-weight: 700;
-    margin: 16px 0 8px 0;
+    color: #ffffff;
+    margin: 0 0 8px 0;
   }
-
+  
   p {
-    color: rgba(255, 255, 255, 0.8);
     font-size: 14px;
+    color: rgba(255, 255, 255, 0.9);
     margin: 0;
   }
 }
 
-/* Acordeão */
-ion-accordion-group {
-  margin: 16px;
-}
-
-ion-accordion {
-  margin-bottom: 8px;
-  border-radius: 12px;
-  overflow: hidden;
-
-  ion-item[slot="header"] {
-    --background: var(--ion-card-background);
-    --border-radius: 12px;
-
-    .question {
-      font-weight: 600;
-      white-space: normal;
+.faq-list {
+  padding: 0 16px;
+  margin-bottom: 24px;
+  
+  ion-accordion {
+    margin-bottom: 8px;
+    background: #3D4A5C;
+    border-radius: 12px;
+    
+    ion-item {
+      --background: transparent;
+      --border-radius: 12px;
+      
+      .faq-question {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 4px 0;
+        
+        ion-icon {
+          font-size: 20px;
+          color: #E68A2E;
+        }
+        
+        span {
+          font-size: 14px;
+          font-weight: 500;
+          color: #F7FAFC;
+        }
+      }
+    }
+    
+    .faq-answer {
+      padding: 16px 20px;
+      background: #4A5568;
+      
+      p {
+        font-size: 14px;
+        line-height: 1.6;
+        color: #E2E8F0;
+        margin: 0;
+      }
     }
   }
-
-  .answer {
-    background: var(--ion-background-color);
-    padding: 16px;
-
-    p {
-      margin: 0;
-      line-height: 1.6;
-      color: var(--ion-text-color);
-    }
-  }
 }
 
-/* Card de contacto */
-ion-card {
-  margin: 16px;
-  border-radius: 12px;
-
-  ion-card-title {
+.tips-section {
+  padding: 0 16px 24px;
+  
+  .section-header {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 16px;
-
-    ion-icon {
-      font-size: 20px;
-    }
-  }
-
-  p {
     margin-bottom: 16px;
-    line-height: 1.6;
-  }
-
-  ion-button {
-    --border-radius: 24px;
+    
+    ion-icon {
+      font-size: 22px;
+      color: #E68A2E;
+    }
+    
+    h2 {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 0;
+      color: #F7FAFC;
+    }
   }
 }
 
+.tips-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
 
+.tip-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background: #3D4A5C;
+  border-radius: 12px;
+  padding: 16px;
+  
+  .tip-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #D4740F 0%, #E68A2E 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    ion-icon {
+      font-size: 20px;
+      color: #ffffff;
+    }
+  }
+  
+  .tip-text {
+    flex: 1;
+    
+    h3 {
+      font-size: 14px;
+      font-weight: 600;
+      margin: 0 0 4px 0;
+      color: #F7FAFC;
+    }
+    
+    p {
+      font-size: 13px;
+      line-height: 1.5;
+      color: #A0AEC0;
+      margin: 0;
+    }
+  }
+}

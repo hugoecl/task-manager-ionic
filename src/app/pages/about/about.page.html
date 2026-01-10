@@ -1,6 +1,6 @@
 <!-- Página Sobre -->
 <ion-header [translucent]="true">
-  <ion-toolbar color="primary">
+  <ion-toolbar color="tertiary">
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/tabs/home"></ion-back-button>
     </ion-buttons>
@@ -10,9 +10,9 @@
 
 <ion-content [fullscreen]="true" class="about-content">
   
-  <!-- Logo e Nome -->
-  <div class="app-info">
-    <div class="logo">
+  <!-- Header com Logo -->
+  <div class="about-header">
+    <div class="logo-container">
       <ion-icon name="checkmark-done-circle-outline"></ion-icon>
     </div>
     <h1>Task Manager</h1>
@@ -20,91 +20,150 @@
   </div>
 
   <!-- Descrição -->
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>
-        <ion-icon name="information-circle-outline"></ion-icon>
-        Sobre a Aplicação
-      </ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
+  <div class="about-card">
+    <div class="card-header">
+      <ion-icon name="information-circle-outline"></ion-icon>
+      <h2>Sobre a Aplicação</h2>
+    </div>
+    <div class="card-content">
       <p>
-        O <strong>Task Manager</strong> é uma aplicação móvel para gestão de tarefas 
-        desenvolvida com <strong>Ionic + Angular</strong>.
+        O <strong>Task Manager</strong> é uma aplicação móvel desenvolvida para ajudar 
+        na organização e gestão de tarefas do dia a dia.
       </p>
       <p>
-        Permite gerir tarefas, projetos e categorias de forma simples e intuitiva, 
-        com visualização em calendário das datas limite.
+        Com uma interface intuitiva e moderna, permite criar projetos, categorizar 
+        atividades e visualizar prazos através de um calendário integrado.
       </p>
-    </ion-card-content>
-  </ion-card>
+    </div>
+  </div>
 
   <!-- Funcionalidades -->
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>
-        <ion-icon name="star-outline"></ion-icon>
-        Funcionalidades
-      </ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <ion-list lines="none">
-        <ion-item>
-          <ion-icon slot="start" name="pricetags-outline" color="primary"></ion-icon>
-          <ion-label>Gestão de Categorias</ion-label>
-        </ion-item>
-        <ion-item>
-          <ion-icon slot="start" name="folder-outline" color="primary"></ion-icon>
-          <ion-label>Gestão de Projetos</ion-label>
-        </ion-item>
-        <ion-item>
-          <ion-icon slot="start" name="checkbox-outline" color="primary"></ion-icon>
-          <ion-label>Gestão de Tarefas</ion-label>
-        </ion-item>
-        <ion-item>
-          <ion-icon slot="start" name="calendar-outline" color="primary"></ion-icon>
-          <ion-label>Calendário de Tarefas</ion-label>
-        </ion-item>
-        <ion-item>
-          <ion-icon slot="start" name="alert-circle-outline" color="danger"></ion-icon>
-          <ion-label>Identificação de Tarefas em Atraso</ion-label>
-        </ion-item>
-      </ion-list>
-    </ion-card-content>
-  </ion-card>
+  <div class="about-card">
+    <div class="card-header">
+      <ion-icon name="star-outline"></ion-icon>
+      <h2>Funcionalidades</h2>
+    </div>
+    <div class="card-content">
+      <div class="feature-list">
+        <div class="feature-item">
+          <div class="feature-icon">
+            <ion-icon name="pricetags-outline"></ion-icon>
+          </div>
+          <div class="feature-text">
+            <h3>Categorias</h3>
+            <p>Organiza os projetos por áreas ou temas</p>
+          </div>
+        </div>
+        
+        <div class="feature-item">
+          <div class="feature-icon">
+            <ion-icon name="folder-outline"></ion-icon>
+          </div>
+          <div class="feature-text">
+            <h3>Projetos</h3>
+            <p>Agrupa tarefas relacionadas</p>
+          </div>
+        </div>
+        
+        <div class="feature-item">
+          <div class="feature-icon">
+            <ion-icon name="checkbox-outline"></ion-icon>
+          </div>
+          <div class="feature-text">
+            <h3>Tarefas</h3>
+            <p>Gestão completa com prioridades e datas</p>
+          </div>
+        </div>
+        
+        <div class="feature-item">
+          <div class="feature-icon">
+            <ion-icon name="calendar-outline"></ion-icon>
+          </div>
+          <div class="feature-text">
+            <h3>Calendário</h3>
+            <p>Visualiza todas as datas importantes</p>
+          </div>
+        </div>
+        
+        <div class="feature-item">
+          <div class="feature-icon">
+            <ion-icon name="alert-circle-outline"></ion-icon>
+          </div>
+          <div class="feature-text">
+            <h3>Alertas</h3>
+            <p>Identifica tarefas em atraso</p>
+          </div>
+        </div>
+        
+        <div class="feature-item">
+          <div class="feature-icon">
+            <ion-icon name="camera-outline"></ion-icon>
+          </div>
+          <div class="feature-text">
+            <h3>Imagens</h3>
+            <p>Adiciona fotos às tarefas</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-  <!-- Créditos -->
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>
-        <ion-icon name="school-outline"></ion-icon>
-        Trabalho Prático
-      </ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <p><strong>Unidade Curricular:</strong> Programação Móvel e Ubíqua</p>
-      <p><strong>Desenvolvido por:</strong> Hugo Leite</p>
-      <p><strong>Ano:</strong> {{ currentYear }}</p>
-    </ion-card-content>
-  </ion-card>
+  <!-- Trabalho Prático -->
+  <div class="about-card">
+    <div class="card-header">
+      <ion-icon name="school-outline"></ion-icon>
+      <h2>Trabalho Prático</h2>
+    </div>
+    <div class="card-content">
+      <div class="info-row">
+        <span class="label">Unidade Curricular:</span>
+        <span class="value">Programação Móvel e Ubíqua</span>
+      </div>
+      <div class="info-row">
+        <span class="label">Desenvolvido por:</span>
+        <span class="value">Hugo Leite</span>
+      </div>
+      <div class="info-row">
+        <span class="label">Ano Letivo:</span>
+        <span class="value">{{ currentYear }}</span>
+      </div>
+    </div>
+  </div>
 
   <!-- Tecnologias -->
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>
-        <ion-icon name="code-slash-outline"></ion-icon>
-        Tecnologias
-      </ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <div class="tech-badges">
-        <ion-badge color="primary">Ionic 8</ion-badge>
-        <ion-badge color="danger">Angular 20</ion-badge>
-        <ion-badge color="tertiary">TypeScript</ion-badge>
-        <ion-badge color="success">Capacitor</ion-badge>
-        <ion-badge color="warning">Ionic Storage</ion-badge>
+  <div class="about-card">
+    <div class="card-header">
+      <ion-icon name="code-slash-outline"></ion-icon>
+      <h2>Tecnologias</h2>
+    </div>
+    <div class="card-content">
+      <div class="tech-grid">
+        <div class="tech-item">
+          <ion-icon name="logo-ionic"></ion-icon>
+          <span>Ionic 8</span>
+        </div>
+        <div class="tech-item">
+          <ion-icon name="logo-angular"></ion-icon>
+          <span>Angular 20</span>
+        </div>
+        <div class="tech-item">
+          <ion-icon name="code-outline"></ion-icon>
+          <span>TypeScript</span>
+        </div>
+        <div class="tech-item">
+          <ion-icon name="phone-portrait-outline"></ion-icon>
+          <span>Capacitor</span>
+        </div>
+        <div class="tech-item">
+          <ion-icon name="save-outline"></ion-icon>
+          <span>Ionic Storage</span>
+        </div>
+        <div class="tech-item">
+          <ion-icon name="color-palette-outline"></ion-icon>
+          <span>SCSS</span>
+        </div>
       </div>
-    </ion-card-content>
-  </ion-card>
+    </div>
+  </div>
 
 </ion-content>

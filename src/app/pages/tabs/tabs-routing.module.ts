@@ -11,32 +11,26 @@ const routes: Routes = [
     path: '',
     component: TabsPage,
     children: [
-      // Tab Início (Dashboard)
       {
         path: 'home',
         loadChildren: () => import('../../home/home.module').then(m => m.HomePageModule)
       },
-      // Tab Tarefas (todas)
       {
         path: 'tasks',
         loadChildren: () => import('../tasks/tasks.module').then(m => m.TasksPageModule)
       },
-      // Tab Projetos
       {
         path: 'projects',
         loadChildren: () => import('../projects/projects.module').then(m => m.ProjectsPageModule)
       },
-      // Tab Calendário
       {
         path: 'calendar',
         loadChildren: () => import('../calendar/calendar.module').then(m => m.CalendarPageModule)
       },
-      // Tab Categorias
       {
         path: 'categories',
         loadChildren: () => import('../categories/categories.module').then(m => m.CategoriesPageModule)
       },
-      // Rota default - redireciona para home
       {
         path: '',
         redirectTo: 'home',

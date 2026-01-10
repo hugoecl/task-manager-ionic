@@ -23,13 +23,13 @@ registerLocaleData(localePt);
   imports: [
     BrowserModule,
     IonicModule.forRoot(),
-    IonicStorageModule.forRoot(), // Configuração do Ionic Storage para persistência local
+    IonicStorageModule.forRoot(),
     AppRoutingModule
   ],
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    { provide: LOCALE_ID, useValue: 'pt' }, // Definir português como idioma
-    provideHttpClient() // Para carregar ficheiros JSON
+    { provide: LOCALE_ID, useValue: 'pt' },
+    provideHttpClient()
   ],
   bootstrap: [AppComponent],
 })

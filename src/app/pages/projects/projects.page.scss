@@ -1,139 +1,167 @@
 /**
- * Estilos da Página de Projetos
+ * Projetos - Tema Cinza Elegante
  */
 
-/* Chip de filtro */
-.filter-chip {
-  padding: 12px 16px;
+.filters-section {
+  padding: 16px;
+}
 
-  ion-chip {
-    border: 2px solid;
-    background: transparent;
-    
-    ion-icon:first-child {
-      margin-right: 4px;
-    }
-
-    ion-icon:last-child {
-      margin-left: 4px;
-      color: var(--ion-color-medium);
-    }
+.counter {
+  padding: 8px 20px 14px;
+  
+  .count {
+    font-size: 22px;
+    font-weight: 800;
+    color: #F7FAFC;
+  }
+  
+  .label {
+    font-size: 14px;
+    color: #A0AEC0;
+    margin-left: 6px;
   }
 }
 
-/* Indicador de cor do projeto */
-.project-indicator {
-  width: 4px;
-  height: 48px;
-  border-radius: 4px;
-  margin-right: 12px;
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  padding: 0 16px 100px;
 }
 
-/* Lista de projetos */
-ion-list {
-  background: transparent;
-  padding: 8px;
-}
-
-ion-item {
-  --border-radius: 12px;
-  --background: var(--ion-card-background);
-  margin-bottom: 8px;
-  --padding-start: 8px;
-
-  h2 {
-    font-weight: 600;
-    font-size: 16px;
-    margin-bottom: 4px;
-  }
-
-  > ion-label > p {
-    font-size: 13px;
-    color: var(--ion-color-medium);
-    margin-bottom: 8px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+.project-card {
+  background: #3D4A5C;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:active {
+    transform: scale(0.97);
   }
 }
 
-/* Meta informação do projeto */
-.project-meta {
+.card-gradient {
+  height: 5px;
+}
+
+.card-content {
+  padding: 14px;
+}
+
+.project-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #F7FAFC;
+  margin: 0 0 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.project-category {
+  font-size: 11px;
+  color: #A0AEC0;
+}
+
+.progress-info {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+  margin-top: 12px;
+}
 
-  ion-badge {
-    font-size: 10px;
-    padding: 4px 8px;
-    border-radius: 12px;
+.progress-bar {
+  flex: 1;
+  height: 4px;
+  background: #4A5568;
+  border-radius: 2px;
+  overflow: hidden;
+  
+  .progress-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.3s ease;
   }
+}
 
-  .task-count {
+.progress-text {
+  font-size: 11px;
+  font-weight: 600;
+  color: #A0AEC0;
+}
+
+.card-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  padding: 0 10px 10px;
+  
+  .action-btn {
+    width: 30px;
+    height: 30px;
+    background: #4A5568;
+    border: none;
+    border-radius: 8px;
     display: flex;
     align-items: center;
-    gap: 4px;
-    font-size: 12px;
-    color: var(--ion-color-medium);
-
-    ion-icon {
-      font-size: 14px;
-    }
-  }
-}
-
-/* Segmento de filtro */
-ion-segment {
-  padding: 8px;
-
-  ion-segment-button {
-    --indicator-color: var(--ion-color-primary);
-    min-width: 50px;
+    justify-content: center;
+    cursor: pointer;
     
     ion-icon {
-      font-size: 20px;
+      font-size: 15px;
+      color: #A0AEC0;
+    }
+    
+    &:active {
+      background: #5A6A7C;
+    }
+    
+    &.danger:active {
+      background: rgba(212, 116, 15, 0.25);
+      
+      ion-icon {
+        color: #D4740F;
+      }
     }
   }
 }
 
-/* Estado vazio */
 .empty-state {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 60vh;
-  padding: 24px;
+  padding: 70px 24px;
   text-align: center;
-
-  ion-icon {
-    font-size: 80px;
-    color: var(--ion-color-medium);
+  
+  .empty-icon {
+    width: 70px;
+    height: 70px;
+    background: #4A5568;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     margin-bottom: 16px;
+    
+    ion-icon {
+      font-size: 34px;
+      color: #718096;
+    }
   }
-
-  h2 {
-    font-size: 20px;
-    font-weight: 600;
-    margin-bottom: 8px;
-    color: var(--ion-text-color);
+  
+  h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #F7FAFC;
+    margin: 0 0 6px;
   }
-
+  
   p {
     font-size: 14px;
-    color: var(--ion-color-medium);
-    margin-bottom: 24px;
-  }
-
-  ion-button {
-    --border-radius: 24px;
+    color: #A0AEC0;
+    margin: 0 0 20px;
   }
 }
-
-/* FAB */
-ion-fab-button {
-  --background: var(--ion-color-primary);
-}
-
-
-

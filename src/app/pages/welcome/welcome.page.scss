@@ -1,181 +1,229 @@
 /**
- * Estilos da Página de Boas-Vindas
- * Design moderno com gradiente e animações
+ * Página de Boas-Vindas - Estilos
+ * Design moderno alinhado com o tema cinza e laranja suave
  */
 
-/* Header transparente */
+/* ==================== RESET GLOBAL ==================== */
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ==================== HEADER ==================== */
 .welcome-header {
   position: absolute;
   top: 0;
   left: 0;
-  right: 0;
+  width: 100%;
   z-index: 100;
 
   ion-toolbar {
     --background: transparent;
     --border-width: 0;
+    --min-height: 56px;
   }
 
   ion-menu-button {
-    --color: #ffffff;
+    --color: rgba(255, 255, 255, 0.9);
     font-size: 28px;
   }
 }
 
-/* Content principal */
+/* ==================== CONTENT ==================== */
 .welcome-content {
-  --background: transparent;
+  --background: #2D3748;
+  --padding-start: 0;
+  --padding-end: 0;
+  --padding-top: 0;
+  --padding-bottom: 0;
 }
 
-/* Background com gradiente */
+ion-content {
+  --overflow: hidden;
+}
+
+/* ==================== BACKGROUND ==================== */
 .background-gradient {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
+  width: 100vw;
+  height: 100vh;
   background: linear-gradient(
-    135deg,
-    #1a237e 0%,
-    #283593 25%,
-    #3949ab 50%,
-    #1e88e5 75%,
-    #42a5f5 100%
+    145deg,
+    #1A202C 0%,
+    #2D3748 25%,
+    #3D4A5C 50%,
+    #3949AB 85%,
+    #42A5F5 100%
   );
-  z-index: -1;
+  z-index: -2;
 }
 
-/* Container principal */
+.background-shapes {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  z-index: -1;
+  pointer-events: none;
+  
+  .shape {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(212, 116, 15, 0.08);
+  }
+  
+  .shape-1 {
+    width: 300px;
+    height: 300px;
+    top: -100px;
+    right: -100px;
+    background: rgba(57, 73, 171, 0.15);
+  }
+  
+  .shape-2 {
+    width: 200px;
+    height: 200px;
+    bottom: 20%;
+    left: -80px;
+    background: rgba(212, 116, 15, 0.1);
+  }
+  
+  .shape-3 {
+    width: 150px;
+    height: 150px;
+    bottom: -50px;
+    right: 20%;
+    background: rgba(66, 165, 245, 0.1);
+  }
+}
+
+/* ==================== CONTAINER ==================== */
 .welcome-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 100%;
-  padding: 40px 24px;
+  width: 100%;
+  min-height: 100vh;
+  padding: 60px 16px 40px;
   text-align: center;
+  box-sizing: border-box;
 }
 
-/* Logo */
-.logo-container {
+/* ==================== LOGO ==================== */
+.logo-wrapper {
   margin-bottom: 24px;
   
-  ion-icon {
-    font-size: 100px;
-    color: #ffffff;
-    filter: drop-shadow(0 4px 20px rgba(0, 0, 0, 0.3));
-    animation: pulse 2s ease-in-out infinite;
+  .logo-circle {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(212, 116, 15, 0.2) 0%, rgba(57, 73, 171, 0.2) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    
+    ion-icon {
+      font-size: 70px;
+      color: #E68A2E;
+    }
   }
 }
 
-@keyframes pulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-}
-
-/* Título */
-.welcome-title {
-  font-family: 'Courier New', monospace;
-  font-size: 36px;
-  font-weight: 700;
-  color: #ffffff;
+/* ==================== TÍTULOS ==================== */
+.app-title {
+  font-size: 38px;
+  font-weight: 800;
+  color: #FFFFFF;
   margin: 0 0 8px 0;
+  letter-spacing: 1px;
+}
+
+.app-subtitle {
+  font-size: 20px;
+  color: #E2E8F0;
+  margin: 0 0 20px 0;
   letter-spacing: 2px;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  text-transform: uppercase;
 }
 
-/* Subtítulo */
-.welcome-subtitle {
-  font-family: 'Courier New', monospace;
-  font-size: 24px;
-  color: rgba(255, 255, 255, 0.9);
-  margin: 0 0 16px 0;
-  letter-spacing: 4px;
-}
-
-/* Descrição */
-.welcome-description {
+.app-description {
   font-size: 14px;
-  color: rgba(255, 255, 255, 0.8);
-  margin: 0 0 32px 0;
+  color: #CBD5E0;
+  margin: 0 0 40px 0;
   line-height: 1.6;
   max-width: 300px;
-
+  
   .highlight {
-    color: #ffd54f;
+    color: #E68A2E;
     font-weight: 600;
   }
 }
 
-/* Features */
-.features {
+/* ==================== FEATURES ==================== */
+.features-row {
   display: flex;
   justify-content: center;
-  gap: 32px;
+  gap: 16px;
   margin-bottom: 48px;
   flex-wrap: wrap;
-
-  .feature-item {
+  
+  .feature {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 8px;
-
-    ion-icon {
-      font-size: 36px;
-      color: rgba(255, 255, 255, 0.9);
-      background: rgba(255, 255, 255, 0.1);
-      padding: 16px;
+    
+    .feature-icon {
+      width: 56px;
+      height: 56px;
       border-radius: 50%;
-      border: 2px solid rgba(255, 255, 255, 0.2);
+      background: rgba(61, 74, 92, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      
+      ion-icon {
+        font-size: 26px;
+        color: #E68A2E;
+      }
     }
-
+    
     span {
-      font-size: 12px;
-      color: rgba(255, 255, 255, 0.8);
+      font-size: 11px;
+      color: #E2E8F0;
       text-transform: uppercase;
       letter-spacing: 1px;
+      font-weight: 600;
     }
   }
 }
 
-/* Botão principal */
-.start-button {
-  --background: #ff6f00;
-  --background-hover: #ff8f00;
-  --background-activated: #e65100;
+/* ==================== BOTÃO ==================== */
+.start-btn {
+  --background: linear-gradient(135deg, #D4740F 0%, #E68A2E 100%);
+  --background-hover: #E68A2E;
+  --background-activated: #bc660d;
   --border-radius: 30px;
-  --box-shadow: 0 4px 20px rgba(255, 111, 0, 0.4);
-  --padding-top: 16px;
-  --padding-bottom: 16px;
+  --box-shadow: none;
+  --padding-top: 18px;
+  --padding-bottom: 18px;
   
+  width: 100%;
+  max-width: 280px;
   font-size: 16px;
   font-weight: 700;
   letter-spacing: 2px;
-  width: 100%;
-  max-width: 280px;
   
   ion-icon {
-    font-size: 20px;
+    font-size: 22px;
   }
 }
-
-/* Versão */
-.version {
-  position: absolute;
-  bottom: 24px;
-  left: 0;
-  right: 0;
-  text-align: center;
-
-  p {
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.5);
-    margin: 0;
-  }
-}
-

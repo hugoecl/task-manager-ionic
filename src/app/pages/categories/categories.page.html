@@ -1,71 +1,64 @@
-<!-- Página de Gestão de Categorias -->
-<ion-header [translucent]="true">
-  <ion-toolbar color="primary">
+<!-- Categorias Premium -->
+<ion-header class="ion-no-border">
+  <ion-toolbar color="tertiary">
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/home"></ion-back-button>
+      <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-title>Categorias</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="addCategory()">
-        <ion-icon slot="icon-only" name="add-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <!-- Header colapsável para iOS -->
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Categorias</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content>
+  <!-- Counter -->
+  <div class="counter">
+    <span class="count">{{ categories.length }}</span>
+    <span class="label">categoria(s)</span>
+  </div>
 
-  <!-- Lista de Categorias -->
-  <ion-list *ngIf="categories.length > 0">
-    <ion-item-sliding *ngFor="let category of categories">
-      <ion-item (click)="goToProjects(category.id)" button>
-        <div class="category-icon" slot="start" [style.backgroundColor]="category.color + '20'" [style.borderColor]="category.color">
-          <ion-icon [name]="category.icon" [style.color]="category.color"></ion-icon>
-        </div>
-        <ion-label>
-          <h2>{{ category.name }}</h2>
-          <p>Criada em {{ category.createdAt | date:'dd/MM/yyyy' }}</p>
-        </ion-label>
-        <ion-icon name="chevron-forward-outline" slot="end" color="medium"></ion-icon>
-      </ion-item>
+  <!-- Categories List -->
+  <div class="categories-list" *ngIf="categories.length > 0">
+    <div class="category-card" *ngFor="let category of categories" (click)="goToProjects(category.id)">
+      <!-- Icon -->
+      <div class="category-icon" [style.background]="'linear-gradient(135deg, ' + category.color + ' 0%, ' + category.color + '80 100%)'">
+        <ion-icon [name]="category.icon"></ion-icon>
+      </div>
+      
+      <!-- Info -->
+      <div class="category-info">
+        <span class="category-name">{{ category.name }}</span>
+        <span class="category-count">{{ getProjectCount(category.id) }} projeto(s)</span>
+      </div>
+      
+      <!-- Actions -->
+      <div class="category-actions">
+        <button class="action-btn" (click)="editCategory(category); $event.stopPropagation()">
+          <ion-icon name="pencil-outline"></ion-icon>
+        </button>
+        <button class="action-btn" (click)="changeColor(category); $event.stopPropagation()">
+          <ion-icon name="color-palette-outline"></ion-icon>
+        </button>
+        <button class="action-btn danger" (click)="deleteCategory(category); $event.stopPropagation()">
+          <ion-icon name="trash-outline"></ion-icon>
+        </button>
+      </div>
+    </div>
+  </div>
 
-      <!-- Opções de slide -->
-      <ion-item-options side="end">
-        <ion-item-option color="primary" (click)="editCategory(category)">
-          <ion-icon slot="icon-only" name="create-outline"></ion-icon>
-        </ion-item-option>
-        <ion-item-option color="tertiary" (click)="changeColor(category)">
-          <ion-icon slot="icon-only" name="color-palette-outline"></ion-icon>
-        </ion-item-option>
-        <ion-item-option color="secondary" (click)="changeIcon(category)">
-          <ion-icon slot="icon-only" name="shapes-outline"></ion-icon>
-        </ion-item-option>
-        <ion-item-option color="danger" (click)="deleteCategory(category)">
-          <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
-        </ion-item-option>
-      </ion-item-options>
-    </ion-item-sliding>
-  </ion-list>
-
-  <!-- Mensagem quando não há categorias -->
+  <!-- Empty State -->
   <div class="empty-state" *ngIf="categories.length === 0">
-    <ion-icon name="pricetags-outline"></ion-icon>
-    <h2>Sem Categorias</h2>
-    <p>Cria a tua primeira categoria para organizar os projetos.</p>
+    <div class="empty-icon">
+      <ion-icon name="pricetags-outline"></ion-icon>
+    </div>
+    <h3>Sem categorias</h3>
+    <p>Cria categorias para organizar</p>
     <ion-button (click)="addCategory()">
-      <ion-icon slot="start" name="add-outline"></ion-icon>
+      <ion-icon slot="start" name="add"></ion-icon>
       Nova Categoria
     </ion-button>
   </div>
 
-  <!-- FAB para adicionar -->
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+  <!-- FAB -->
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
     <ion-fab-button (click)="addCategory()">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>

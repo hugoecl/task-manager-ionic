@@ -1,124 +1,101 @@
-<!-- Dashboard - Página Principal -->
-<ion-header [translucent]="true">
-  <ion-toolbar color="primary">
+<!-- Dashboard Premium -->
+<ion-header class="ion-no-border">
+  <ion-toolbar color="tertiary">
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title>Dashboard</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="dashboard-content">
-
-  <!-- Saudação -->
-  <div class="greeting-section">
-    <h1>{{ greeting }}</h1>
-    <p>{{ currentDate | date:'EEEE, d MMMM':'':'pt' }}</p>
+<ion-content>
+  <!-- Header com Gradiente -->
+  <div class="hero-section">
+    <div class="hero-glow"></div>
+    <h1 class="hero-greeting">{{ greeting }}</h1>
+    <p class="hero-date">{{ currentDate | date:'EEEE, d MMMM':'':'pt' }}</p>
   </div>
 
-  <!-- Cards de Estatísticas -->
-  <div class="stats-grid">
+  <!-- Stats Cards -->
+  <div class="stats-row">
     <div class="stat-card">
-      <div class="stat-icon primary">
-        <ion-icon name="checkbox-outline"></ion-icon>
-      </div>
-      <div class="stat-info">
-        <span class="stat-value">{{ completedTasks }}/{{ totalTasks }}</span>
-        <span class="stat-label">Tarefas Concluídas</span>
-      </div>
+      <div class="stat-number">{{ totalTasks }}</div>
+      <div class="stat-label">Total</div>
     </div>
-
-    <div class="stat-card" *ngIf="overdueTasks.length > 0">
-      <div class="stat-icon danger">
-        <ion-icon name="alert-circle-outline"></ion-icon>
-      </div>
-      <div class="stat-info">
-        <span class="stat-value danger">{{ overdueTasks.length }}</span>
-        <span class="stat-label">Em Atraso</span>
-      </div>
+    <div class="stat-card highlight">
+      <div class="stat-number">{{ completedTasks }}</div>
+      <div class="stat-label">Feitas</div>
     </div>
+    <div class="stat-card" [class.danger]="overdueTasks.length > 0">
+      <div class="stat-number">{{ overdueTasks.length }}</div>
+      <div class="stat-label">Atraso</div>
+    </div>
+  </div>
 
-    <div class="stat-card" *ngIf="overdueTasks.length === 0">
-      <div class="stat-icon success">
-        <ion-icon name="checkmark-circle-outline"></ion-icon>
-      </div>
-      <div class="stat-info">
-        <span class="stat-value success">0</span>
-        <span class="stat-label">Em Atraso</span>
+  <!-- Progress Ring -->
+  <div class="progress-section" *ngIf="totalTasks > 0">
+    <div class="progress-ring">
+      <svg viewBox="0 0 100 100">
+        <circle class="progress-bg" cx="50" cy="50" r="40"/>
+        <circle class="progress-fill" cx="50" cy="50" r="40"
+                [style.strokeDasharray]="251.2"
+                [style.strokeDashoffset]="251.2 - (251.2 * progressPercent / 100)"/>
+      </svg>
+      <div class="progress-text">
+        <span class="progress-value">{{ progressPercent }}%</span>
+        <span class="progress-label">completo</span>
       </div>
     </div>
   </div>
 
-  <!-- Barra de Progresso -->
-  <div class="progress-section">
-    <div class="progress-header">
-      <span>Progresso Geral</span>
-      <span class="progress-percent">{{ progressPercent }}%</span>
+  <!-- Overdue Alert -->
+  <div class="alert-card danger" *ngIf="overdueTasks.length > 0">
+    <div class="alert-icon">
+      <ion-icon name="alert-circle"></ion-icon>
     </div>
-    <div class="progress-bar">
-      <div class="progress-fill" [style.width.%]="progressPercent"></div>
+    <div class="alert-content">
+      <span class="alert-title">{{ overdueTasks.length }} em atraso</span>
+      <span class="alert-subtitle">Requer atenção</span>
     </div>
+    <ion-icon name="chevron-forward"></ion-icon>
   </div>
 
-  <!-- Tarefas em Atraso -->
-  <div class="section" *ngIf="overdueTasks.length > 0">
-    <div class="section-header danger">
-      <ion-icon name="warning-outline"></ion-icon>
-      <h2>Tarefas em Atraso</h2>
-    </div>
-    
-    <ion-list lines="none" class="task-list">
-      <ion-item *ngFor="let task of overdueTasks" button (click)="goToTask(task.id)" class="task-item overdue">
-        <ion-icon name="time-outline" slot="start" color="danger"></ion-icon>
-        <ion-label>
-          <h3>{{ task.title }}</h3>
-          <p>Venceu em {{ task.dueDate | date:'dd/MM/yyyy' }}</p>
-        </ion-label>
-        <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
-      </ion-item>
-    </ion-list>
-  </div>
-
-  <!-- Próximas Tarefas -->
+  <!-- Upcoming Tasks -->
   <div class="section" *ngIf="upcomingTasks.length > 0">
-    <div class="section-header">
-      <ion-icon name="calendar-outline"></ion-icon>
-      <h2>Próximas Tarefas</h2>
-    </div>
+    <h2 class="section-title">Próximas Tarefas</h2>
     
-    <ion-list lines="none" class="task-list">
-      <ion-item *ngFor="let task of upcomingTasks" button (click)="goToTask(task.id)" class="task-item">
-        <div class="task-date" slot="start">
-          <span class="day">{{ task.dueDate | date:'dd' }}</span>
+    <div class="tasks-container">
+      <div class="task-card" *ngFor="let task of upcomingTasks" (click)="goToTask(task.id)">
+        <div class="task-date-badge" [class]="getPriorityColor(task.priority)">
+          <span class="day">{{ task.dueDate | date:'d' }}</span>
           <span class="month">{{ task.dueDate | date:'MMM':'':'pt' }}</span>
         </div>
-        <ion-label>
-          <h3>{{ task.title }}</h3>
-          <p>{{ getProjectName(task.projectId) }}</p>
-        </ion-label>
-        <ion-badge [color]="getPriorityColor(task.priority)" slot="end">
-          {{ getPriorityLabel(task.priority) }}
-        </ion-badge>
-      </ion-item>
-    </ion-list>
+        <div class="task-details">
+          <span class="task-name">{{ task.title }}</span>
+          <span class="task-project">{{ getProjectName(task.projectId) }}</span>
+        </div>
+        <div class="task-priority" [class]="task.priority"></div>
+      </div>
+    </div>
   </div>
 
-  <!-- Estado Vazio -->
+  <!-- Empty State -->
   <div class="empty-state" *ngIf="totalTasks === 0">
-    <ion-icon name="clipboard-outline"></ion-icon>
-    <h3>Sem tarefas</h3>
-    <p>Começa por criar um projeto e adicionar tarefas!</p>
-    <ion-button fill="outline" (click)="goToProjects()">
-      <ion-icon slot="start" name="add-outline"></ion-icon>
-      Criar Projeto
+    <div class="empty-icon">
+      <ion-icon name="rocket-outline"></ion-icon>
+    </div>
+    <h3>Começa a tua jornada</h3>
+    <p>Cria o teu primeiro projeto</p>
+    <ion-button (click)="goToProjects()">
+      <ion-icon slot="start" name="add"></ion-icon>
+      Novo Projeto
     </ion-button>
   </div>
 
-  <!-- Tudo em dia -->
-  <div class="all-done" *ngIf="totalTasks > 0 && overdueTasks.length === 0 && upcomingTasks.length === 0">
-    <ion-icon name="trophy-outline"></ion-icon>
+  <!-- All Done -->
+  <div class="success-card" *ngIf="totalTasks > 0 && overdueTasks.length === 0 && upcomingTasks.length === 0">
+    <div class="success-icon">✨</div>
     <h3>Tudo em dia!</h3>
-    <p>Não tens tarefas pendentes. Bom trabalho! 🎉</p>
+    <p>Excelente trabalho</p>
   </div>
 
 </ion-content>

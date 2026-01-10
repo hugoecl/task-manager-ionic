@@ -11,13 +11,8 @@ import { Component } from '@angular/core';
   standalone: false
 })
 export class AboutPage {
-
-  /** Versão da aplicação */
   appVersion = '1.0.0';
-  
-  /** Ano atual */
   currentYear = new Date().getFullYear();
 
   constructor() { }
-
 }

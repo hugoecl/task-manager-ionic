@@ -5,7 +5,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MenuController, Platform } from '@ionic/angular';
 import { ScreenOrientation } from '@capacitor/screen-orientation';
-import { DataInitService } from './services';
+import { DataInitService } from './services/data-init.service';
 
 @Component({
   selector: 'app-root',
@@ -23,23 +23,14 @@ export class AppComponent implements OnInit {
     this.initializeApp();
   }
 
-  /**
-   * Inicializa configurações da aplicação
-   */
   async initializeApp(): Promise<void> {
-    // Aguarda a plataforma estar pronta
     await this.platform.ready();
     
-    // Bloqueia orientação em portrait (apenas em dispositivos nativos)
     if (this.platform.is('capacitor')) {
       await this.lockOrientation();
     }
   }
 
-  /**
-   * Bloqueia a orientação do ecrã em portrait
-   * Impede rotação para landscape
-   */
   async lockOrientation(): Promise<void> {
     try {
       await ScreenOrientation.lock({ orientation: 'portrait' });
@@ -49,16 +40,10 @@ export class AppComponent implements OnInit {
     }
   }
 
-  /**
-   * Inicializa os dados da aplicação quando arranca
-   */
   async ngOnInit(): Promise<void> {
     await this.dataInitService.initialize();
   }
 
-  /**
-   * Fecha o side menu
-   */
   closeMenu(): void {
     this.menuController.close('main-menu');
   }

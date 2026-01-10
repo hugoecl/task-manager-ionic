@@ -6,33 +6,27 @@ import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
-  // Rota inicial - redireciona para welcome
   {
     path: '',
     redirectTo: 'welcome',
     pathMatch: 'full'
   },
-  // Página de boas-vindas (SEM tabs)
   {
     path: 'welcome',
     loadChildren: () => import('./pages/welcome/welcome.module').then(m => m.WelcomePageModule)
   },
-  // Tabs (navegação principal COM tabs)
   {
     path: 'tabs',
     loadChildren: () => import('./pages/tabs/tabs.module').then(m => m.TabsPageModule)
   },
-  // Página Sobre (acessível via side menu)
   {
     path: 'about',
     loadChildren: () => import('./pages/about/about.module').then(m => m.AboutPageModule)
   },
-  // Página Perguntas/FAQ (acessível via side menu)
   {
     path: 'faq',
     loadChildren: () => import('./pages/faq/faq.module').then(m => m.FaqPageModule)
   },
-  // Rotas de detalhe (fora das tabs mas acessíveis)
   {
     path: 'tasks/:projectId',
     loadChildren: () => import('./pages/tasks/tasks.module').then(m => m.TasksPageModule)
@@ -45,7 +39,6 @@ const routes: Routes = [
     path: 'projects/category/:categoryId',
     loadChildren: () => import('./pages/projects/projects.module').then(m => m.ProjectsPageModule)
   },
-  // Fallback - redireciona rotas antigas para tabs
   {
     path: 'home',
     redirectTo: 'tabs/home',

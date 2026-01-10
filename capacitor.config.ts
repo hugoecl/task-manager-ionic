@@ -24,13 +24,13 @@ const config: CapacitorConfig = {
     // Configuração da barra de estado
     StatusBar: {
       style: 'dark',
-      backgroundColor: '#3880ff'
+      backgroundColor: '#2D3748'
     },
     
     // Configuração do splash screen
     SplashScreen: {
       launchShowDuration: 2000,
-      backgroundColor: '#3880ff',
+      backgroundColor: '#2D3748',
       showSpinner: false
     }
   }
