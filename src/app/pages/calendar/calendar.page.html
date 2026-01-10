@@ -1,13 +1,94 @@
+<!-- Página de Calendário -->
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>calendar</ion-title>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Calendário</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
+  <!-- Header colapsável -->
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">calendar</ion-title>
+      <ion-title size="large">Calendário</ion-title>
     </ion-toolbar>
   </ion-header>
+
+  <!-- Legenda -->
+  <div class="legend">
+    <div class="legend-item">
+      <span class="dot overdue"></span>
+      <span>Em atraso</span>
+    </div>
+    <div class="legend-item">
+      <span class="dot pending"></span>
+      <span>Pendentes</span>
+    </div>
+    <div class="legend-item">
+      <span class="dot completed"></span>
+      <span>Concluídas</span>
+    </div>
+  </div>
+
+  <!-- Calendário -->
+  <ion-card class="calendar-card">
+    <ion-datetime
+      presentation="date"
+      [value]="selectedDate"
+      (ionChange)="onDateChange($event)"
+      [highlightedDates]="highlightedDates"
+      locale="pt-PT"
+      firstDayOfWeek="1"
+      size="cover">
+    </ion-datetime>
+  </ion-card>
+
+  <!-- Tarefas da Data Selecionada -->
+  <ion-card class="tasks-card">
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="calendar-outline"></ion-icon>
+        {{ getFormattedSelectedDate() }}
+      </ion-card-title>
+      <div class="task-stats" *ngIf="tasksForDate.length > 0">
+        <ion-badge color="medium">{{ getTaskStats().total }} tarefa(s)</ion-badge>
+        <ion-badge color="success" *ngIf="getTaskStats().completed > 0">{{ getTaskStats().completed }} concluída(s)</ion-badge>
+        <ion-badge color="danger" *ngIf="getTaskStats().overdue > 0">{{ getTaskStats().overdue }} em atraso</ion-badge>
+      </div>
+    </ion-card-header>
+    
+    <ion-card-content>
+      <!-- Lista de tarefas -->
+      <ion-list *ngIf="tasksForDate.length > 0" lines="none">
+        <ion-item 
+          *ngFor="let task of tasksForDate" 
+          [class.completed]="task.completed"
+          [class.overdue]="isOverdue(task)"
+          (click)="goToTaskDetail(task.id)" 
+          button>
+          <ion-icon 
+            slot="start" 
+            [name]="task.completed ? 'checkmark-circle' : (isOverdue(task) ? 'alert-circle' : 'ellipse-outline')"
+            [color]="task.completed ? 'success' : (isOverdue(task) ? 'danger' : 'primary')">
+          </ion-icon>
+          <ion-label>
+            <h3 [class.strikethrough]="task.completed">{{ task.title }}</h3>
+            <p>{{ getProjectName(task.projectId) }}</p>
+          </ion-label>
+          <ion-badge slot="end" [color]="getPriorityColor(task.priority)">
+            {{ task.priority === 'high' ? 'Alta' : task.priority === 'medium' ? 'Média' : 'Baixa' }}
+          </ion-badge>
+          <ion-icon slot="end" name="chevron-forward-outline" color="medium"></ion-icon>
+        </ion-item>
+      </ion-list>
+
+      <!-- Estado vazio -->
+      <div class="empty-date" *ngIf="tasksForDate.length === 0">
+        <ion-icon name="calendar-clear-outline"></ion-icon>
+        <p>Sem tarefas para esta data</p>
+      </div>
+    </ion-card-content>
+  </ion-card>
 </ion-content>

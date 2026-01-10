@@ -1,13 +1,165 @@
+<!-- Página de Detalhes da Tarefa -->
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>task-detail</ion-title>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button [defaultHref]="'/tasks/' + task?.projectId"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Detalhes</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="toggleEditMode()" *ngIf="!editMode">
+        <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+      </ion-button>
+      <ion-button (click)="saveChanges()" *ngIf="editMode" color="success">
+        <ion-icon slot="icon-only" name="checkmark-outline"></ion-icon>
+      </ion-button>
+      <ion-button (click)="showOptions()">
+        <ion-icon slot="icon-only" name="ellipsis-vertical"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">task-detail</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content [fullscreen]="true" *ngIf="task">
+  <!-- Card de Status -->
+  <ion-card class="status-card" [class.completed]="task.completed" [class.overdue]="isOverdue()">
+    <ion-card-content>
+      <div class="status-row">
+        <div class="status-info">
+          <ion-icon [name]="task.completed ? 'checkmark-circle' : (isOverdue() ? 'alert-circle' : 'ellipse-outline')"></ion-icon>
+          <span>{{ task.completed ? 'Concluída' : (isOverdue() ? 'Em Atraso' : 'Pendente') }}</span>
+        </div>
+        <ion-button fill="outline" size="small" (click)="toggleComplete()">
+          {{ task.completed ? 'Reabrir' : 'Concluir' }}
+        </ion-button>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Formulário de Edição -->
+  <ion-card *ngIf="editMode">
+    <ion-card-header>
+      <ion-card-title>Editar Tarefa</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label position="stacked">Título</ion-label>
+        <ion-input [(ngModel)]="formData.title" placeholder="Título da tarefa"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Descrição</ion-label>
+        <ion-textarea [(ngModel)]="formData.description" placeholder="Descrição (opcional)" rows="3"></ion-textarea>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Data Limite</ion-label>
+        <ion-datetime-button datetime="datetime"></ion-datetime-button>
+        <ion-modal [keepContentsMounted]="true">
+          <ng-template>
+            <ion-datetime 
+              id="datetime" 
+              [(ngModel)]="formData.dueDate"
+              presentation="date"
+              [preferWheel]="true">
+            </ion-datetime>
+          </ng-template>
+        </ion-modal>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Prioridade</ion-label>
+        <ion-select [(ngModel)]="formData.priority" interface="action-sheet">
+          <ion-select-option value="high">🔴 Alta</ion-select-option>
+          <ion-select-option value="medium">🟡 Média</ion-select-option>
+          <ion-select-option value="low">🟢 Baixa</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <div class="form-actions">
+        <ion-button fill="outline" (click)="toggleEditMode()">Cancelar</ion-button>
+        <ion-button (click)="saveChanges()">Guardar</ion-button>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Visualização de Detalhes -->
+  <div *ngIf="!editMode">
+    <!-- Título e Descrição -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>{{ task.title }}</ion-card-title>
+        <ion-card-subtitle *ngIf="project">
+          <ion-icon name="folder-outline"></ion-icon>
+          {{ project.name }}
+        </ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content *ngIf="task.description">
+        <p>{{ task.description }}</p>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Informações -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="information-circle-outline"></ion-icon>
+          Informações
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list lines="none">
+          <!-- Data Limite -->
+          <ion-item>
+            <ion-icon slot="start" name="calendar-outline" [color]="isOverdue() ? 'danger' : 'primary'"></ion-icon>
+            <ion-label>
+              <p>Data Limite</p>
+              <h3 [class.overdue]="isOverdue()">{{ task.dueDate | date:'EEEE, dd MMMM yyyy':'':'pt' }}</h3>
+            </ion-label>
+          </ion-item>
+
+          <!-- Prioridade -->
+          <ion-item>
+            <ion-icon slot="start" name="flag-outline" [color]="getPriorityColor()"></ion-icon>
+            <ion-label>
+              <p>Prioridade</p>
+              <h3>
+                <ion-badge [color]="getPriorityColor()">{{ getPriorityText() }}</ion-badge>
+              </h3>
+            </ion-label>
+          </ion-item>
+
+          <!-- Data de Criação -->
+          <ion-item>
+            <ion-icon slot="start" name="time-outline" color="medium"></ion-icon>
+            <ion-label>
+              <p>Criada em</p>
+              <h3>{{ task.createdAt | date:'dd/MM/yyyy HH:mm' }}</h3>
+            </ion-label>
+          </ion-item>
+
+          <!-- Última Atualização -->
+          <ion-item>
+            <ion-icon slot="start" name="refresh-outline" color="medium"></ion-icon>
+            <ion-label>
+              <p>Última atualização</p>
+              <h3>{{ task.updatedAt | date:'dd/MM/yyyy HH:mm' }}</h3>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Imagem (se existir) -->
+    <ion-card *ngIf="task.imageUrl">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="image-outline"></ion-icon>
+          Imagem
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <img [src]="task.imageUrl" alt="Imagem da tarefa" class="task-image">
+      </ion-card-content>
+    </ion-card>
+  </div>
 </ion-content>

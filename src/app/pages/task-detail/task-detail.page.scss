@@ -1,0 +1,156 @@
+/**
+ * Estilos da Página de Detalhes da Tarefa
+ */
+
+/* Card de Status */
+.status-card {
+  margin: 16px;
+  border-radius: 12px;
+
+  .status-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .status-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    ion-icon {
+      font-size: 24px;
+    }
+
+    span {
+      font-weight: 600;
+      font-size: 16px;
+    }
+  }
+
+  &.completed {
+    background: rgba(var(--ion-color-success-rgb), 0.1);
+    border: 1px solid var(--ion-color-success);
+
+    .status-info {
+      ion-icon, span {
+        color: var(--ion-color-success);
+      }
+    }
+  }
+
+  &.overdue {
+    background: rgba(var(--ion-color-danger-rgb), 0.1);
+    border: 1px solid var(--ion-color-danger);
+
+    .status-info {
+      ion-icon, span {
+        color: var(--ion-color-danger);
+      }
+    }
+  }
+}
+
+/* Cards */
+ion-card {
+  margin: 16px;
+  border-radius: 12px;
+}
+
+ion-card-header {
+  ion-card-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 18px;
+
+    ion-icon {
+      font-size: 20px;
+    }
+  }
+
+  ion-card-subtitle {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 4px;
+
+    ion-icon {
+      font-size: 14px;
+    }
+  }
+}
+
+ion-card-content {
+  p {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--ion-text-color);
+  }
+}
+
+/* Lista de informações */
+ion-list {
+  background: transparent;
+  padding: 0;
+
+  ion-item {
+    --background: transparent;
+    --padding-start: 0;
+
+    ion-icon[slot="start"] {
+      font-size: 24px;
+      margin-right: 16px;
+    }
+
+    p {
+      font-size: 12px;
+      color: var(--ion-color-medium);
+      margin-bottom: 4px;
+    }
+
+    h3 {
+      font-size: 15px;
+      font-weight: 500;
+
+      &.overdue {
+        color: var(--ion-color-danger);
+      }
+    }
+  }
+}
+
+/* Formulário de edição */
+ion-item {
+  --background: var(--ion-background-color);
+  margin-bottom: 12px;
+  border-radius: 8px;
+
+  ion-label[position="stacked"] {
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+/* Imagem da tarefa */
+.task-image {
+  width: 100%;
+  border-radius: 8px;
+  max-height: 300px;
+  object-fit: cover;
+}
+
+/* Badge de prioridade */
+ion-badge {
+  font-size: 12px;
+  padding: 6px 12px;
+  border-radius: 16px;
+}
+

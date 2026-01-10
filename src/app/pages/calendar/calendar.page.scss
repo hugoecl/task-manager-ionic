@@ -1,0 +1,163 @@
+/**
+ * Estilos da Página de Calendário
+ */
+
+/* Legenda */
+.legend {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  padding: 12px 16px;
+  flex-wrap: wrap;
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--ion-color-medium);
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+
+      &.overdue {
+        background: #eb445a;
+      }
+
+      &.pending {
+        background: #3880ff;
+      }
+
+      &.completed {
+        background: #2dd36f;
+      }
+    }
+  }
+}
+
+/* Card do calendário */
+.calendar-card {
+  margin: 8px 16px;
+  border-radius: 16px;
+  overflow: hidden;
+
+  ion-datetime {
+    --background: var(--ion-card-background);
+    
+    &::part(calendar-day today) {
+      border: 2px solid var(--ion-color-primary);
+      border-radius: 50%;
+    }
+
+    &::part(calendar-day active) {
+      background: var(--ion-color-primary);
+      color: white;
+    }
+  }
+}
+
+/* Card de tarefas */
+.tasks-card {
+  margin: 16px;
+  border-radius: 16px;
+
+  ion-card-header {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    ion-card-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 16px;
+      text-transform: capitalize;
+
+      ion-icon {
+        font-size: 20px;
+      }
+    }
+
+    .task-stats {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+
+      ion-badge {
+        font-size: 10px;
+        padding: 4px 8px;
+        border-radius: 12px;
+      }
+    }
+  }
+}
+
+/* Lista de tarefas */
+ion-list {
+  background: transparent;
+  padding: 0;
+}
+
+ion-item {
+  --background: var(--ion-background-color);
+  --border-radius: 8px;
+  margin-bottom: 8px;
+  --padding-start: 8px;
+
+  &.completed {
+    opacity: 0.6;
+  }
+
+  &.overdue:not(.completed) {
+    --background: rgba(var(--ion-color-danger-rgb), 0.1);
+    border-left: 3px solid var(--ion-color-danger);
+  }
+
+  ion-icon[slot="start"] {
+    font-size: 24px;
+    margin-right: 12px;
+  }
+
+  h3 {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 2px;
+
+    &.strikethrough {
+      text-decoration: line-through;
+    }
+  }
+
+  p {
+    font-size: 12px;
+    color: var(--ion-color-medium);
+  }
+
+  ion-badge {
+    font-size: 10px;
+    margin-right: 8px;
+  }
+}
+
+/* Estado vazio para data */
+.empty-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px 16px;
+  text-align: center;
+
+  ion-icon {
+    font-size: 48px;
+    color: var(--ion-color-medium);
+    margin-bottom: 12px;
+  }
+
+  p {
+    font-size: 14px;
+    color: var(--ion-color-medium);
+  }
+}
+

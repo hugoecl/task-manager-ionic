@@ -1,13 +1,96 @@
+<!-- Página de Gestão de Projetos -->
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>projects</ion-title>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ selectedCategory ? selectedCategory.name : 'Todos os Projetos' }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="addProject()">
+        <ion-icon slot="icon-only" name="add-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  
+  <!-- Barra de filtro por categoria -->
+  <ion-toolbar *ngIf="!selectedCategory && categories.length > 0">
+    <ion-segment [value]="selectedCategoryId" (ionChange)="onCategoryChange($any($event.detail.value))">
+      <ion-segment-button value="">
+        <ion-label>Todos</ion-label>
+      </ion-segment-button>
+      <ion-segment-button *ngFor="let cat of categories" [value]="cat.id">
+        <ion-icon [name]="cat.icon" [style.color]="cat.color"></ion-icon>
+      </ion-segment-button>
+    </ion-segment>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
+  <!-- Header colapsável -->
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">projects</ion-title>
+      <ion-title size="large">{{ selectedCategory ? selectedCategory.name : 'Projetos' }}</ion-title>
     </ion-toolbar>
   </ion-header>
+
+  <!-- Chip de filtro ativo -->
+  <div class="filter-chip" *ngIf="selectedCategory">
+    <ion-chip [style.borderColor]="selectedCategory.color" (click)="clearFilter()">
+      <ion-icon [name]="selectedCategory.icon" [style.color]="selectedCategory.color"></ion-icon>
+      <ion-label>{{ selectedCategory.name }}</ion-label>
+      <ion-icon name="close-circle"></ion-icon>
+    </ion-chip>
+  </div>
+
+  <!-- Lista de Projetos -->
+  <ion-list *ngIf="projects.length > 0">
+    <ion-item-sliding *ngFor="let project of projects">
+      <ion-item (click)="goToTasks(project.id)" button>
+        <div class="project-indicator" slot="start" [style.backgroundColor]="getCategoryColor(project.categoryId)"></div>
+        <ion-label>
+          <h2>{{ project.name }}</h2>
+          <p *ngIf="project.description">{{ project.description }}</p>
+          <div class="project-meta">
+            <ion-badge [style.backgroundColor]="getCategoryColor(project.categoryId)" *ngIf="!selectedCategory">
+              {{ getCategoryName(project.categoryId) }}
+            </ion-badge>
+            <span class="task-count">
+              <ion-icon name="checkbox-outline"></ion-icon>
+              {{ getTaskCount(project.id).completed }}/{{ getTaskCount(project.id).total }} tarefas
+            </span>
+          </div>
+        </ion-label>
+        <ion-icon name="chevron-forward-outline" slot="end" color="medium"></ion-icon>
+      </ion-item>
+
+      <!-- Opções de slide -->
+      <ion-item-options side="end">
+        <ion-item-option color="primary" (click)="editProject(project, $event)">
+          <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+        </ion-item-option>
+        <ion-item-option color="danger" (click)="deleteProject(project, $event)">
+          <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+        </ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
+  </ion-list>
+
+  <!-- Estado vazio -->
+  <div class="empty-state" *ngIf="projects.length === 0">
+    <ion-icon name="folder-open-outline"></ion-icon>
+    <h2>Sem Projetos</h2>
+    <p *ngIf="selectedCategory">Não há projetos na categoria "{{ selectedCategory.name }}".</p>
+    <p *ngIf="!selectedCategory">Cria o teu primeiro projeto para começar a organizar tarefas.</p>
+    <ion-button (click)="addProject()">
+      <ion-icon slot="start" name="add-outline"></ion-icon>
+      Novo Projeto
+    </ion-button>
+  </div>
+
+  <!-- FAB -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="addProject()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>

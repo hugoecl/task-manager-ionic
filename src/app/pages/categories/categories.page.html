@@ -1,13 +1,73 @@
+<!-- Página de Gestão de Categorias -->
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>categories</ion-title>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Categorias</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="addCategory()">
+        <ion-icon slot="icon-only" name="add-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
+  <!-- Header colapsável para iOS -->
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">categories</ion-title>
+      <ion-title size="large">Categorias</ion-title>
     </ion-toolbar>
   </ion-header>
+
+  <!-- Lista de Categorias -->
+  <ion-list *ngIf="categories.length > 0">
+    <ion-item-sliding *ngFor="let category of categories">
+      <ion-item (click)="goToProjects(category.id)" button>
+        <div class="category-icon" slot="start" [style.backgroundColor]="category.color + '20'" [style.borderColor]="category.color">
+          <ion-icon [name]="category.icon" [style.color]="category.color"></ion-icon>
+        </div>
+        <ion-label>
+          <h2>{{ category.name }}</h2>
+          <p>Criada em {{ category.createdAt | date:'dd/MM/yyyy' }}</p>
+        </ion-label>
+        <ion-icon name="chevron-forward-outline" slot="end" color="medium"></ion-icon>
+      </ion-item>
+
+      <!-- Opções de slide -->
+      <ion-item-options side="end">
+        <ion-item-option color="primary" (click)="editCategory(category)">
+          <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+        </ion-item-option>
+        <ion-item-option color="tertiary" (click)="changeColor(category)">
+          <ion-icon slot="icon-only" name="color-palette-outline"></ion-icon>
+        </ion-item-option>
+        <ion-item-option color="secondary" (click)="changeIcon(category)">
+          <ion-icon slot="icon-only" name="shapes-outline"></ion-icon>
+        </ion-item-option>
+        <ion-item-option color="danger" (click)="deleteCategory(category)">
+          <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+        </ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
+  </ion-list>
+
+  <!-- Mensagem quando não há categorias -->
+  <div class="empty-state" *ngIf="categories.length === 0">
+    <ion-icon name="pricetags-outline"></ion-icon>
+    <h2>Sem Categorias</h2>
+    <p>Cria a tua primeira categoria para organizar os projetos.</p>
+    <ion-button (click)="addCategory()">
+      <ion-icon slot="start" name="add-outline"></ion-icon>
+      Nova Categoria
+    </ion-button>
+  </div>
+
+  <!-- FAB para adicionar -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="addCategory()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>

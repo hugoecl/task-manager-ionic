@@ -1,0 +1,172 @@
+/**
+ * Estilos da Página de Tarefas
+ */
+
+/* Descrição do projeto */
+.project-description {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 12px 16px;
+  background: var(--ion-color-light);
+  margin: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--ion-color-medium-shade);
+
+  ion-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+}
+
+/* Lista de tarefas */
+ion-list {
+  background: transparent;
+  padding: 8px;
+}
+
+ion-item {
+  --border-radius: 12px;
+  --background: var(--ion-card-background);
+  margin-bottom: 8px;
+  --padding-start: 8px;
+
+  &.completed {
+    opacity: 0.6;
+    
+    h2 {
+      color: var(--ion-color-medium);
+    }
+  }
+
+  &.overdue:not(.completed) {
+    --background: rgba(var(--ion-color-danger-rgb), 0.1);
+    border-left: 3px solid var(--ion-color-danger);
+  }
+
+  h2 {
+    font-weight: 600;
+    font-size: 15px;
+    margin-bottom: 4px;
+
+    &.strikethrough {
+      text-decoration: line-through;
+    }
+  }
+
+  .task-description {
+    font-size: 13px;
+    color: var(--ion-color-medium);
+    margin-bottom: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+/* Meta informação da tarefa */
+.task-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+
+  .due-date {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: var(--ion-color-medium);
+
+    ion-icon {
+      font-size: 14px;
+    }
+
+    &.overdue {
+      color: var(--ion-color-danger);
+      font-weight: 600;
+    }
+
+    &.today {
+      color: var(--ion-color-warning);
+      font-weight: 600;
+    }
+  }
+
+  ion-badge {
+    font-size: 10px;
+    padding: 4px 8px;
+    border-radius: 12px;
+  }
+}
+
+/* Checkbox */
+ion-checkbox {
+  --size: 24px;
+  margin-right: 8px;
+}
+
+/* Dica de reordenação */
+.reorder-hint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  background: var(--ion-color-warning-tint);
+  margin: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--ion-color-warning-shade);
+
+  ion-icon {
+    font-size: 18px;
+  }
+}
+
+/* Estado vazio */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 50vh;
+  padding: 24px;
+  text-align: center;
+
+  ion-icon {
+    font-size: 80px;
+    color: var(--ion-color-medium);
+    margin-bottom: 16px;
+  }
+
+  h2 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--ion-text-color);
+  }
+
+  p {
+    font-size: 14px;
+    color: var(--ion-color-medium);
+    margin-bottom: 24px;
+  }
+
+  ion-button {
+    --border-radius: 24px;
+  }
+}
+
+/* Reorder */
+ion-reorder {
+  margin-left: 8px;
+}
+
+/* FAB */
+ion-fab-button {
+  --background: var(--ion-color-primary);
+}
+

@@ -1,13 +1,106 @@
+<!-- Página de Tarefas de um Projeto -->
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>tasks</ion-title>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/projects"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ project?.name || 'Tarefas' }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="toggleReorder()" [color]="reorderEnabled ? 'warning' : ''">
+        <ion-icon slot="icon-only" name="reorder-four-outline"></ion-icon>
+      </ion-button>
+      <ion-button (click)="addTask()">
+        <ion-icon slot="icon-only" name="add-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
+  <!-- Header colapsável -->
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">tasks</ion-title>
+      <ion-title size="large">{{ project?.name || 'Tarefas' }}</ion-title>
     </ion-toolbar>
   </ion-header>
+
+  <!-- Descrição do projeto -->
+  <div class="project-description" *ngIf="project?.description">
+    <ion-icon name="information-circle-outline"></ion-icon>
+    <span>{{ project?.description }}</span>
+  </div>
+
+  <!-- Lista de Tarefas -->
+  <ion-list *ngIf="tasks.length > 0">
+    <ion-reorder-group [disabled]="!reorderEnabled" (ionItemReorder)="handleReorder($event)">
+      <ion-item-sliding *ngFor="let task of tasks">
+        <ion-item [class.completed]="task.completed" [class.overdue]="isOverdue(task)" (click)="goToTaskDetail(task.id)" button>
+          <!-- Checkbox de conclusão -->
+          <ion-checkbox 
+            slot="start" 
+            [checked]="task.completed" 
+            (ionChange)="toggleComplete(task)"
+            (click)="$event.stopPropagation()">
+          </ion-checkbox>
+          
+          <ion-label>
+            <h2 [class.strikethrough]="task.completed">{{ task.title }}</h2>
+            <p *ngIf="task.description" class="task-description">{{ task.description }}</p>
+            <div class="task-meta">
+              <!-- Data limite -->
+              <span class="due-date" [class.overdue]="isOverdue(task)" [class.today]="isDueToday(task)">
+                <ion-icon name="calendar-outline"></ion-icon>
+                {{ task.dueDate | date:'dd/MM/yyyy' }}
+                <span *ngIf="isDueToday(task)">(Hoje)</span>
+              </span>
+              <!-- Prioridade -->
+              <ion-badge [color]="getPriorityColor(task.priority)">
+                {{ task.priority === 'high' ? 'Alta' : task.priority === 'medium' ? 'Média' : 'Baixa' }}
+              </ion-badge>
+            </div>
+          </ion-label>
+
+          <!-- Indicador de imagem -->
+          <ion-icon *ngIf="task.imageUrl" name="image-outline" slot="end" color="medium"></ion-icon>
+          
+          <!-- Reorder handle -->
+          <ion-reorder slot="end"></ion-reorder>
+        </ion-item>
+
+        <!-- Opções de slide -->
+        <ion-item-options side="end">
+          <ion-item-option color="primary" (click)="goToTaskDetail(task.id)">
+            <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+          </ion-item-option>
+          <ion-item-option color="danger" (click)="deleteTask(task, $event)">
+            <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+          </ion-item-option>
+        </ion-item-options>
+      </ion-item-sliding>
+    </ion-reorder-group>
+  </ion-list>
+
+  <!-- Dica de reordenação -->
+  <div class="reorder-hint" *ngIf="reorderEnabled && tasks.length > 1">
+    <ion-icon name="information-circle-outline"></ion-icon>
+    <span>Arrasta as tarefas para reordenar</span>
+  </div>
+
+  <!-- Estado vazio -->
+  <div class="empty-state" *ngIf="tasks.length === 0">
+    <ion-icon name="checkbox-outline"></ion-icon>
+    <h2>Sem Tarefas</h2>
+    <p>Este projeto ainda não tem tarefas. Cria a primeira!</p>
+    <ion-button (click)="addTask()">
+      <ion-icon slot="start" name="add-outline"></ion-icon>
+      Nova Tarefa
+    </ion-button>
+  </div>
+
+  <!-- FAB -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="addTask()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>
