@@ -6,13 +6,18 @@ import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
-  // Rota inicial - redireciona para home
+  // Rota inicial - redireciona para welcome
   {
     path: '',
-    redirectTo: 'home',
+    redirectTo: 'welcome',
     pathMatch: 'full'
   },
-  // Página inicial (dashboard)
+  // Página de boas-vindas (landing page)
+  {
+    path: 'welcome',
+    loadChildren: () => import('./pages/welcome/welcome.module').then(m => m.WelcomePageModule)
+  },
+  // Página principal (dashboard)
   {
     path: 'home',
     loadChildren: () => import('./home/home.module').then(m => m.HomePageModule)

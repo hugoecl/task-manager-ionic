@@ -1,0 +1,58 @@
+<!-- Página de Boas-Vindas -->
+<ion-content [fullscreen]="true" class="welcome-content">
+  
+  <!-- Background com gradiente -->
+  <div class="background-gradient"></div>
+  
+  <!-- Conteúdo principal -->
+  <div class="welcome-container">
+    
+    <!-- Logo/Ícone -->
+    <div class="logo-container">
+      <ion-icon name="checkmark-done-circle-outline"></ion-icon>
+    </div>
+
+    <!-- Título principal -->
+    <h1 class="welcome-title">Task Manager</h1>
+    
+    <!-- Subtítulo -->
+    <p class="welcome-subtitle">Organiza o teu dia</p>
+    
+    <!-- Descrição -->
+    <p class="welcome-description">
+      Gere as tuas tarefas por estado: 
+      <span class="highlight">A realizar</span>, 
+      <span class="highlight">Por fazer</span> e 
+      <span class="highlight">Concluídas</span>.
+    </p>
+
+    <!-- Features -->
+    <div class="features">
+      <div class="feature-item">
+        <ion-icon name="folder-outline"></ion-icon>
+        <span>Projetos</span>
+      </div>
+      <div class="feature-item">
+        <ion-icon name="pricetags-outline"></ion-icon>
+        <span>Categorias</span>
+      </div>
+      <div class="feature-item">
+        <ion-icon name="calendar-outline"></ion-icon>
+        <span>Calendário</span>
+      </div>
+    </div>
+
+    <!-- Botão principal -->
+    <ion-button expand="block" class="start-button" (click)="goToApp()">
+      <ion-icon slot="start" name="rocket-outline"></ion-icon>
+      COMEÇAR
+    </ion-button>
+
+  </div>
+
+  <!-- Versão -->
+  <div class="version">
+    <p>PMeU 2026 - Hugo Leite</p>
+  </div>
+
+</ion-content>
