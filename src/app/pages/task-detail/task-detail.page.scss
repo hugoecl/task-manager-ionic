@@ -140,11 +140,44 @@ ion-item {
 }
 
 /* Imagem da tarefa */
-.task-image {
-  width: 100%;
-  border-radius: 8px;
-  max-height: 300px;
-  object-fit: cover;
+.image-container {
+  .task-image {
+    width: 100%;
+    border-radius: 12px;
+    max-height: 300px;
+    object-fit: cover;
+    margin-bottom: 12px;
+  }
+
+  .image-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+  }
+}
+
+/* Sem imagem */
+.no-image {
+  text-align: center;
+  padding: 24px;
+  background: var(--ion-color-light);
+  border-radius: 12px;
+  border: 2px dashed var(--ion-color-medium);
+
+  ion-icon {
+    font-size: 48px;
+    color: var(--ion-color-medium);
+    margin-bottom: 12px;
+  }
+
+  p {
+    color: var(--ion-color-medium);
+    margin-bottom: 16px;
+  }
+
+  ion-button {
+    --border-radius: 20px;
+  }
 }
 
 /* Badge de prioridade */

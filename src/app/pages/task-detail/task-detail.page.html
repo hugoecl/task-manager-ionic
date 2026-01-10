@@ -149,8 +149,8 @@
       </ion-card-content>
     </ion-card>
 
-    <!-- Imagem (se existir) -->
-    <ion-card *ngIf="task.imageUrl">
+    <!-- Imagem -->
+    <ion-card>
       <ion-card-header>
         <ion-card-title>
           <ion-icon name="image-outline"></ion-icon>
@@ -158,7 +158,30 @@
         </ion-card-title>
       </ion-card-header>
       <ion-card-content>
-        <img [src]="task.imageUrl" alt="Imagem da tarefa" class="task-image">
+        <!-- Se tem imagem, mostra -->
+        <div *ngIf="task.imageUrl" class="image-container">
+          <img [src]="task.imageUrl" alt="Imagem da tarefa" class="task-image">
+          <div class="image-actions">
+            <ion-button fill="outline" size="small" (click)="showImageOptions()">
+              <ion-icon slot="start" name="camera-outline"></ion-icon>
+              Alterar
+            </ion-button>
+            <ion-button fill="outline" size="small" color="danger" (click)="removeImage()">
+              <ion-icon slot="start" name="trash-outline"></ion-icon>
+              Remover
+            </ion-button>
+          </div>
+        </div>
+        
+        <!-- Se não tem imagem, mostra botão para adicionar -->
+        <div *ngIf="!task.imageUrl" class="no-image">
+          <ion-icon name="camera-outline"></ion-icon>
+          <p>Sem imagem anexada</p>
+          <ion-button fill="outline" (click)="showImageOptions()">
+            <ion-icon slot="start" name="add-outline"></ion-icon>
+            Adicionar Imagem
+          </ion-button>
+        </div>
       </ion-card-content>
     </ion-card>
   </div>

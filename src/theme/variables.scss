@@ -1,2 +1,230 @@
-// For information on how to create your own theme, please refer to:
-// https://ionicframework.com/docs/theming/
+/**
+ * Task Manager - Tema de Cores Personalizado
+ * Esquema de cores moderno e profissional
+ * 
+ * Cores principais:
+ * - Primary: Azul vibrante (#3880ff)
+ * - Secondary: Azul escuro (#3171e0)
+ * - Tertiary: Laranja energético (#ff9500)
+ * - Success: Verde (#2dd36f)
+ * - Warning: Amarelo (#ffc409)
+ * - Danger: Vermelho (#eb445a)
+ */
+
+// Ionic Variables and Theming
+// --------------------------------------------------
+
+:root {
+  /** Primary - Azul principal **/
+  --ion-color-primary: #3880ff;
+  --ion-color-primary-rgb: 56, 128, 255;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #3171e0;
+  --ion-color-primary-tint: #4c8dff;
+
+  /** Secondary - Azul escuro **/
+  --ion-color-secondary: #3dc2ff;
+  --ion-color-secondary-rgb: 61, 194, 255;
+  --ion-color-secondary-contrast: #ffffff;
+  --ion-color-secondary-contrast-rgb: 255, 255, 255;
+  --ion-color-secondary-shade: #36abe0;
+  --ion-color-secondary-tint: #50c8ff;
+
+  /** Tertiary - Laranja (destaque) **/
+  --ion-color-tertiary: #ff9500;
+  --ion-color-tertiary-rgb: 255, 149, 0;
+  --ion-color-tertiary-contrast: #ffffff;
+  --ion-color-tertiary-contrast-rgb: 255, 255, 255;
+  --ion-color-tertiary-shade: #e08400;
+  --ion-color-tertiary-tint: #ffaa33;
+
+  /** Success - Verde **/
+  --ion-color-success: #2dd36f;
+  --ion-color-success-rgb: 45, 211, 111;
+  --ion-color-success-contrast: #ffffff;
+  --ion-color-success-contrast-rgb: 255, 255, 255;
+  --ion-color-success-shade: #28ba62;
+  --ion-color-success-tint: #42d77d;
+
+  /** Warning - Amarelo **/
+  --ion-color-warning: #ffc409;
+  --ion-color-warning-rgb: 255, 196, 9;
+  --ion-color-warning-contrast: #000000;
+  --ion-color-warning-contrast-rgb: 0, 0, 0;
+  --ion-color-warning-shade: #e0ac08;
+  --ion-color-warning-tint: #ffca22;
+
+  /** Danger - Vermelho **/
+  --ion-color-danger: #eb445a;
+  --ion-color-danger-rgb: 235, 68, 90;
+  --ion-color-danger-contrast: #ffffff;
+  --ion-color-danger-contrast-rgb: 255, 255, 255;
+  --ion-color-danger-shade: #cf3c4f;
+  --ion-color-danger-tint: #ed576b;
+
+  /** Dark **/
+  --ion-color-dark: #222428;
+  --ion-color-dark-rgb: 34, 36, 40;
+  --ion-color-dark-contrast: #ffffff;
+  --ion-color-dark-contrast-rgb: 255, 255, 255;
+  --ion-color-dark-shade: #1e2023;
+  --ion-color-dark-tint: #383a3e;
+
+  /** Medium **/
+  --ion-color-medium: #92949c;
+  --ion-color-medium-rgb: 146, 148, 156;
+  --ion-color-medium-contrast: #ffffff;
+  --ion-color-medium-contrast-rgb: 255, 255, 255;
+  --ion-color-medium-shade: #808289;
+  --ion-color-medium-tint: #9d9fa6;
+
+  /** Light **/
+  --ion-color-light: #f4f5f8;
+  --ion-color-light-rgb: 244, 245, 248;
+  --ion-color-light-contrast: #000000;
+  --ion-color-light-contrast-rgb: 0, 0, 0;
+  --ion-color-light-shade: #d7d8da;
+  --ion-color-light-tint: #f5f6f9;
+}
+
+/**
+ * Tema Escuro (Dark Mode)
+ * Ativado automaticamente quando o sistema está em modo escuro
+ */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Cores de fundo escuras */
+    --ion-background-color: #121212;
+    --ion-background-color-rgb: 18, 18, 18;
+
+    --ion-text-color: #ffffff;
+    --ion-text-color-rgb: 255, 255, 255;
+
+    /* Cards e elementos */
+    --ion-card-background: #1e1e1e;
+    --ion-item-background: #1e1e1e;
+
+    /* Bordas e separadores */
+    --ion-border-color: #2d2d2d;
+
+    /* Toolbar */
+    --ion-toolbar-background: #1a1a1a;
+
+    /* Tab bar */
+    --ion-tab-bar-background: #1a1a1a;
+
+    /* Cores ajustadas para dark mode */
+    --ion-color-primary: #4d9fff;
+    --ion-color-primary-shade: #3d8ae6;
+    --ion-color-primary-tint: #6ab0ff;
+
+    --ion-color-step-50: #1e1e1e;
+    --ion-color-step-100: #2a2a2a;
+    --ion-color-step-150: #363636;
+    --ion-color-step-200: #414141;
+    --ion-color-step-250: #4d4d4d;
+    --ion-color-step-300: #595959;
+    --ion-color-step-350: #656565;
+    --ion-color-step-400: #717171;
+    --ion-color-step-450: #7d7d7d;
+    --ion-color-step-500: #898989;
+    --ion-color-step-550: #949494;
+    --ion-color-step-600: #a0a0a0;
+    --ion-color-step-650: #acacac;
+    --ion-color-step-700: #b8b8b8;
+    --ion-color-step-750: #c4c4c4;
+    --ion-color-step-800: #d0d0d0;
+    --ion-color-step-850: #dbdbdb;
+    --ion-color-step-900: #e7e7e7;
+    --ion-color-step-950: #f3f3f3;
+  }
+
+  /* iOS specific dark mode */
+  .ios {
+    --ion-background-color: #000000;
+    --ion-background-color-rgb: 0, 0, 0;
+    --ion-card-background: #1c1c1d;
+    --ion-item-background: #1c1c1d;
+  }
+
+  /* Material Design dark mode */
+  .md {
+    --ion-background-color: #121212;
+    --ion-background-color-rgb: 18, 18, 18;
+    --ion-card-background: #1e1e1e;
+    --ion-item-background: #1e1e1e;
+  }
+}
+
+/**
+ * Tema Claro (Light Mode)
+ * Ativado quando o sistema está em modo claro
+ */
+@media (prefers-color-scheme: light) {
+  :root {
+    --ion-background-color: #f4f5f8;
+    --ion-background-color-rgb: 244, 245, 248;
+
+    --ion-text-color: #1a1a1a;
+    --ion-text-color-rgb: 26, 26, 26;
+
+    --ion-card-background: #ffffff;
+    --ion-item-background: #ffffff;
+
+    --ion-border-color: #e0e0e0;
+    --ion-toolbar-background: #ffffff;
+    --ion-tab-bar-background: #ffffff;
+  }
+}
+
+/**
+ * Estilos Globais Personalizados
+ */
+
+/* Arredondamento de cards */
+ion-card {
+  --border-radius: 16px;
+  border-radius: 16px;
+}
+
+/* Arredondamento de botões */
+ion-button {
+  --border-radius: 12px;
+}
+
+/* FAB button */
+ion-fab-button {
+  --box-shadow: 0 4px 16px rgba(var(--ion-color-primary-rgb), 0.4);
+}
+
+/* Badges arredondados */
+ion-badge {
+  --border-radius: 8px;
+  border-radius: 8px;
+  padding: 4px 8px;
+}
+
+/* Item arredondado */
+ion-item {
+  --border-radius: 12px;
+}
+
+/* Segmentos arredondados */
+ion-segment-button {
+  --border-radius: 8px;
+}
+
+/* Alertas e modais */
+ion-alert {
+  --border-radius: 16px;
+}
+
+ion-modal {
+  --border-radius: 20px 20px 0 0;
+}
+
+/* Toast */
+ion-toast {
+  --border-radius: 12px;
+}

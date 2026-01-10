@@ -1,10 +1,11 @@
 /**
  * Página de Detalhes da Tarefa
- * Permite visualizar e editar todos os detalhes de uma tarefa
+ * Permite visualizar, editar e adicionar imagens a uma tarefa
  */
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AlertController, ToastController, ActionSheetController } from '@ionic/angular';
+import { AlertController, ToastController, ActionSheetController, Platform } from '@ionic/angular';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { ProjectService, TaskService } from '../../services';
 import { Project, Task } from '../../models';
 
@@ -41,6 +42,7 @@ export class TaskDetailPage implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
+    private platform: Platform,
     private alertController: AlertController,
     private toastController: ToastController,
     private actionSheetController: ActionSheetController,
@@ -134,7 +136,7 @@ export class TaskDetailPage implements OnInit {
   toggleEditMode(): void {
     this.editMode = !this.editMode;
     if (!this.editMode) {
-      this.initFormData(); // Reset form if canceling
+      this.initFormData();
     }
   }
 
@@ -167,26 +169,27 @@ export class TaskDetailPage implements OnInit {
     }
   }
 
+  // ========== FUNCIONALIDADES DE IMAGEM ==========
+
   /**
-   * Mostra opções adicionais
+   * Mostra opções para adicionar imagem
    */
-  async showOptions(): Promise<void> {
+  async showImageOptions(): Promise<void> {
     const actionSheet = await this.actionSheetController.create({
-      header: 'Opções',
+      header: 'Adicionar Imagem',
       buttons: [
         {
-          text: 'Mover para outro projeto',
-          icon: 'arrow-forward-outline',
+          text: 'Tirar Foto',
+          icon: 'camera-outline',
           handler: () => {
-            this.moveToProject();
+            this.takePicture(CameraSource.Camera);
           }
         },
         {
-          text: 'Eliminar tarefa',
-          icon: 'trash-outline',
-          role: 'destructive',
+          text: 'Escolher da Galeria',
+          icon: 'images-outline',
           handler: () => {
-            this.deleteTask();
+            this.takePicture(CameraSource.Photos);
           }
         },
         {
@@ -195,6 +198,120 @@ export class TaskDetailPage implements OnInit {
           role: 'cancel'
         }
       ]
+    });
+    await actionSheet.present();
+  }
+
+  /**
+   * Captura ou seleciona imagem
+   * @param source - Fonte da imagem (câmara ou galeria)
+   */
+  async takePicture(source: CameraSource): Promise<void> {
+    try {
+      const image = await Camera.getPhoto({
+        quality: 80,
+        allowEditing: false,
+        resultType: CameraResultType.DataUrl,
+        source: source,
+        width: 800,
+        height: 800
+      });
+
+      if (image.dataUrl) {
+        // Guardar imagem na tarefa
+        await this.taskService.update(this.taskId, {
+          imageUrl: image.dataUrl
+        });
+        await this.loadData();
+        this.showToast('Imagem adicionada!');
+      }
+    } catch (error: any) {
+      // Utilizador cancelou ou erro
+      if (error.message !== 'User cancelled photos app') {
+        console.error('Erro ao capturar imagem:', error);
+        this.showToast('Erro ao capturar imagem', 'danger');
+      }
+    }
+  }
+
+  /**
+   * Remove imagem da tarefa
+   */
+  async removeImage(): Promise<void> {
+    const alert = await this.alertController.create({
+      header: 'Remover Imagem',
+      message: 'Tens a certeza que queres remover a imagem?',
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Remover',
+          cssClass: 'danger',
+          handler: async () => {
+            await this.taskService.update(this.taskId, {
+              imageUrl: undefined
+            });
+            await this.loadData();
+            this.showToast('Imagem removida!');
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  // ========== OUTRAS OPÇÕES ==========
+
+  /**
+   * Mostra opções adicionais
+   */
+  async showOptions(): Promise<void> {
+    const buttons: any[] = [
+      {
+        text: 'Adicionar/Alterar Imagem',
+        icon: 'camera-outline',
+        handler: () => {
+          this.showImageOptions();
+        }
+      }
+    ];
+
+    // Opção de remover imagem (se existir)
+    if (this.task?.imageUrl) {
+      buttons.push({
+        text: 'Remover Imagem',
+        icon: 'trash-outline',
+        handler: () => {
+          this.removeImage();
+        }
+      });
+    }
+
+    buttons.push(
+      {
+        text: 'Mover para outro projeto',
+        icon: 'arrow-forward-outline',
+        handler: () => {
+          this.moveToProject();
+        }
+      },
+      {
+        text: 'Eliminar tarefa',
+        icon: 'trash-outline',
+        role: 'destructive',
+        handler: () => {
+          this.deleteTask();
+        }
+      },
+      {
+        text: 'Cancelar',
+        icon: 'close-outline',
+        role: 'cancel'
+      }
+    );
+
+    const actionSheet = await this.actionSheetController.create({
+      header: 'Opções',
+      buttons: buttons
     });
     await actionSheet.present();
   }
@@ -221,10 +338,7 @@ export class TaskDetailPage implements OnInit {
       header: 'Mover para',
       inputs: inputs,
       buttons: [
-        {
-          text: 'Cancelar',
-          role: 'cancel'
-        },
+        { text: 'Cancelar', role: 'cancel' },
         {
           text: 'Mover',
           handler: async (data) => {
@@ -237,7 +351,6 @@ export class TaskDetailPage implements OnInit {
         }
       ]
     });
-
     await alert.present();
   }
 
@@ -249,22 +362,18 @@ export class TaskDetailPage implements OnInit {
       header: 'Eliminar Tarefa',
       message: `Tens a certeza que queres eliminar a tarefa "${this.task?.title}"?`,
       buttons: [
-        {
-          text: 'Cancelar',
-          role: 'cancel'
-        },
+        { text: 'Cancelar', role: 'cancel' },
         {
           text: 'Eliminar',
           cssClass: 'danger',
           handler: async () => {
             await this.taskService.delete(this.taskId);
             this.showToast('Tarefa eliminada!');
-            this.router.navigate(['/tasks', this.task?.projectId]);
+            this.router.navigate(['/tabs/tasks']);
           }
         }
       ]
     });
-
     await alert.present();
   }
 
@@ -272,11 +381,7 @@ export class TaskDetailPage implements OnInit {
    * Volta para a lista de tarefas
    */
   goBack(): void {
-    if (this.task) {
-      this.router.navigate(['/tasks', this.task.projectId]);
-    } else {
-      this.router.navigate(['/projects']);
-    }
+    this.router.navigate(['/tabs/tasks']);
   }
 
   /**
