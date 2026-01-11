@@ -5,7 +5,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AlertController, ToastController, ActionSheetController, Platform } from '@ionic/angular';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
-import { ProjectService, TaskService } from '../../services';
+import { ProjectService, TaskService, NotificationService } from '../../services';
 import { Project, Task } from '../../models';
 
 @Component({
@@ -35,7 +35,8 @@ export class TaskDetailPage implements OnInit {
     private toastController: ToastController,
     private actionSheetController: ActionSheetController,
     private projectService: ProjectService,
-    private taskService: TaskService
+    private taskService: TaskService,
+    private notificationService: NotificationService
   ) {}
 
   async ngOnInit(): Promise<void> {
@@ -113,6 +114,11 @@ export class TaskDetailPage implements OnInit {
         dueDate: new Date(this.formData.dueDate),
         priority: this.formData.priority
       });
+      // Atualizar notificações após atualizar a tarefa
+      const updatedTask = await this.taskService.getById(this.taskId);
+      if (updatedTask) {
+        await this.notificationService.scheduleTaskNotifications(updatedTask);
+      }
       await this.loadData();
       this.editMode = false;
       this.showToast('Tarefa atualizada!');
@@ -122,8 +128,20 @@ export class TaskDetailPage implements OnInit {
   async toggleComplete(): Promise<void> {
     if (this.task) {
       await this.taskService.toggleComplete(this.taskId);
+      const updatedTask = await this.taskService.getById(this.taskId);
       await this.loadData();
-      this.showToast(this.task.completed ? 'Tarefa reaberta' : 'Tarefa concluída!');
+      
+      // Se a tarefa foi marcada como concluída, cancelar notificações
+      // Se foi reaberta, reagendar notificações
+      if (updatedTask) {
+        if (updatedTask.completed) {
+          await this.notificationService.cancelTaskNotifications(this.taskId);
+        } else {
+          await this.notificationService.scheduleTaskNotifications(updatedTask);
+        }
+      }
+      
+      this.showToast(updatedTask?.completed ? 'Tarefa concluída! Notificações canceladas.' : 'Tarefa reaberta! Notificações reagendadas.');
     }
   }
 
@@ -224,6 +242,10 @@ export class TaskDetailPage implements OnInit {
       buttons: [
         { text: 'Cancelar', role: 'cancel' },
         { text: 'Eliminar', cssClass: 'danger', handler: async () => {
+          // Cancelar notificações antes de deletar
+          if (this.taskId) {
+            await this.notificationService.cancelTaskNotifications(this.taskId);
+          }
           await this.taskService.delete(this.taskId);
           this.showToast('Tarefa eliminada!');
           this.router.navigate(['/tabs/tasks']);

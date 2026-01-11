@@ -6,6 +6,7 @@ import { Component, OnInit } from '@angular/core';
 import { MenuController, Platform } from '@ionic/angular';
 import { ScreenOrientation } from '@capacitor/screen-orientation';
 import { DataInitService } from './services/data-init.service';
+import { NotificationService } from './services/notification.service';
 
 @Component({
   selector: 'app-root',
@@ -18,7 +19,8 @@ export class AppComponent implements OnInit {
   constructor(
     private menuController: MenuController,
     private platform: Platform,
-    private dataInitService: DataInitService
+    private dataInitService: DataInitService,
+    private notificationService: NotificationService
   ) {
     this.initializeApp();
   }
@@ -28,6 +30,8 @@ export class AppComponent implements OnInit {
     
     if (this.platform.is('capacitor')) {
       await this.lockOrientation();
+      // Inicializar notificações
+      await this.notificationService.initializeNotifications();
     }
   }
 

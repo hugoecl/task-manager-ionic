@@ -26,12 +26,18 @@
 
 /** ==================== TIPOGRAFIA ==================== **/
 
+/* Fonte personalizada - Inter */
+html, body, * {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
+}
+
 /* Fonte customizada para títulos */
 h1, h2, h3, h4, h5, h6,
 ion-title,
 ion-card-title {
   font-weight: 700;
   color: var(--ion-text-color);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
 /* Texto secundário */

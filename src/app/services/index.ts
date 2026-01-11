@@ -6,3 +6,4 @@ export * from './category.service';
 export * from './project.service';
 export * from './task.service';
 export * from './data-init.service';
+export * from './notification.service';

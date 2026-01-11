@@ -4,7 +4,7 @@
  */
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ProjectService, TaskService } from '../services';
+import { ProjectService, TaskService, NotificationService } from '../services';
 import { Project, Task } from '../models';
 
 @Component({
@@ -26,7 +26,8 @@ export class HomePage implements OnInit {
   constructor(
     private router: Router,
     private projectService: ProjectService,
-    private taskService: TaskService
+    private taskService: TaskService,
+    private notificationService: NotificationService
   ) {
     this.setGreeting();
   }
@@ -70,6 +71,9 @@ export class HomePage implements OnInit {
       })
       .sort((a: Task, b: Task) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime())
       .slice(0, 5);
+    
+    // Verificar e agendar notificações para todas as tarefas
+    await this.notificationService.checkOverdueTasks(tasks);
   }
 
   getProjectName(projectId: string): string {

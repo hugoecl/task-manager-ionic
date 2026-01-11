@@ -4,7 +4,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AlertController, ToastController, ItemReorderEventDetail } from '@ionic/angular';
-import { ProjectService, TaskService } from '../../services';
+import { ProjectService, TaskService, NotificationService } from '../../services';
 import { Project, Task } from '../../models';
 
 @Component({
@@ -29,7 +29,8 @@ export class TasksPage implements OnInit {
     private alertController: AlertController,
     private toastController: ToastController,
     private projectService: ProjectService,
-    private taskService: TaskService
+    private taskService: TaskService,
+    private notificationService: NotificationService
   ) {}
 
   async ngOnInit(): Promise<void> {
@@ -244,7 +245,7 @@ export class TasksPage implements OnInit {
           cssClass: 'alert-button-confirm',
           handler: async (data) => {
             if (data.title?.trim()) {
-              await this.taskService.create({
+              const newTask = await this.taskService.create({
                 title: data.title.trim(),
                 description: data.description?.trim() || '',
                 dueDate: new Date(data.dueDate),
@@ -252,6 +253,8 @@ export class TasksPage implements OnInit {
                 completed: false,
                 priority: priority as 'low' | 'medium' | 'high'
               });
+              // Agendar notificações para a nova tarefa
+              await this.notificationService.scheduleTaskNotifications(newTask);
               await this.loadData();
               this.showToast('Tarefa criada com sucesso!');
               return true;
@@ -312,6 +315,8 @@ export class TasksPage implements OnInit {
       buttons: [
         { text: 'Cancelar', role: 'cancel' },
         { text: 'Eliminar', cssClass: 'danger', handler: async () => {
+          // Cancelar notificações da tarefa antes de deletar
+          await this.notificationService.cancelTaskNotifications(task.id);
           await this.taskService.delete(task.id);
           await this.loadData();
           this.showToast('Tarefa eliminada!');
