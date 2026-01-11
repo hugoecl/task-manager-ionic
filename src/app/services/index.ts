@@ -7,3 +7,4 @@ export * from './project.service';
 export * from './task.service';
 export * from './data-init.service';
 export * from './notification.service';
+export * from './translation.service';

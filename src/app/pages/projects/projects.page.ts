@@ -4,7 +4,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AlertController, ToastController } from '@ionic/angular';
-import { CategoryService, ProjectService, TaskService } from '../../services';
+import { CategoryService, ProjectService, TaskService, TranslationService } from '../../services';
 import { Category, Project, Task } from '../../models';
 
 @Component({
@@ -27,7 +27,8 @@ export class ProjectsPage implements OnInit {
     private toastController: ToastController,
     private categoryService: CategoryService,
     private projectService: ProjectService,
-    private taskService: TaskService
+    private taskService: TaskService,
+    private translation: TranslationService
   ) {}
 
   async ngOnInit(): Promise<void> {
@@ -102,24 +103,24 @@ export class ProjectsPage implements OnInit {
     }));
 
     if (this.categories.length === 0) {
-      this.showToast('Cria uma categoria primeiro!', 'warning');
+      this.showToast(this.translation.category('createCategoryFirst'), 'warning');
       return;
     }
 
     const alert = await this.alertController.create({
-      header: 'Novo Projeto',
-      message: 'Preenche os dados abaixo para criar um novo projeto.\n\nSeleciona uma categoria para organizar o teu projeto.',
+      header: this.translation.project('newProject'),
+      message: `${this.translation.project('createProjectForm')}\n\n${this.translation.project('selectCategoryMessage')}`,
       inputs: [
         { 
           name: 'name', 
           type: 'text', 
-          placeholder: 'Ex: Desenvolvimento Web App',
+          placeholder: this.translation.placeholder('projectName'),
           attributes: { required: true, maxlength: 100, autocomplete: 'off' }
         },
         { 
           name: 'description', 
           type: 'textarea', 
-          placeholder: 'Descreve o objetivo e detalhes do projeto (opcional)',
+          placeholder: this.translation.placeholder('projectDescription'),
           attributes: { rows: 4, maxlength: 300 }
         },
         ...categoryInputs
@@ -127,12 +128,12 @@ export class ProjectsPage implements OnInit {
       cssClass: 'custom-alert professional-form',
       buttons: [
         { 
-          text: 'Cancelar', 
+          text: this.translation.common('cancel'), 
           role: 'cancel',
           cssClass: 'alert-button-cancel'
         },
         {
-          text: 'Criar Projeto',
+          text: this.translation.project('newProject'),
           cssClass: 'alert-button-confirm',
           handler: async (data) => {
             if (data.name && data.name.trim() && data.category) {
@@ -142,10 +143,10 @@ export class ProjectsPage implements OnInit {
                 categoryId: data.category
               });
               await this.loadData();
-              this.showToast('Projeto criado com sucesso!');
+              this.showToast(this.translation.project('projectCreated'));
               return true;
             } else {
-              this.showToast('Nome e categoria são obrigatórios!', 'warning');
+              this.showToast(this.translation.project('nameAndCategoryRequired'), 'warning');
               return false;
             }
           }
@@ -172,9 +173,9 @@ export class ProjectsPage implements OnInit {
           let labelText = '';
           
           if (name === 'name') {
-            labelText = '📋 NOME DO PROJETO *';
+            labelText = `${this.translation.label('projectNameLabel')} *`;
           } else if (name === 'description') {
-            labelText = '📄 DESCRIÇÃO (OPCIONAL)';
+            labelText = this.translation.label('projectDescriptionLabel');
           }
           
           if (labelText && !wrapper.querySelector('.field-label')) {
@@ -193,7 +194,7 @@ export class ProjectsPage implements OnInit {
         if (!radioGroup.querySelector('.category-section-label')) {
           const labelElement = document.createElement('div');
           labelElement.className = 'category-section-label';
-          labelElement.textContent = '🏷️ SELECIONA A CATEGORIA *';
+          labelElement.textContent = `${this.translation.label('categoryLabel')} *`;
           labelElement.style.cssText = 'color: #E68A2E; font-size: 11px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: 16px; padding-left: 4px; display: block;';
           (radioGroup as HTMLElement).insertBefore(labelElement, radioGroup.firstChild);
         }

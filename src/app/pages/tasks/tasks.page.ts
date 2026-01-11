@@ -4,7 +4,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AlertController, ToastController, ItemReorderEventDetail } from '@ionic/angular';
-import { ProjectService, TaskService, NotificationService } from '../../services';
+import { ProjectService, TaskService, NotificationService, TranslationService } from '../../services';
 import { Project, Task } from '../../models';
 
 @Component({
@@ -30,7 +30,8 @@ export class TasksPage implements OnInit {
     private toastController: ToastController,
     private projectService: ProjectService,
     private taskService: TaskService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private translation: TranslationService
   ) {}
 
   async ngOnInit(): Promise<void> {
@@ -119,7 +120,7 @@ export class TasksPage implements OnInit {
   async toggleComplete(task: Task): Promise<void> {
     await this.taskService.toggleComplete(task.id);
     await this.loadData();
-    this.showToast(task.completed ? 'Tarefa reaberta' : 'Tarefa concluída!');
+      this.showToast(task.completed ? this.translation.task('taskReopened') : this.translation.task('taskCompleted'));
   }
 
   async addTask(): Promise<void> {
@@ -132,7 +133,7 @@ export class TasksPage implements OnInit {
 
   async selectProjectAndAddTask(): Promise<void> {
     if (this.projects.length === 0) {
-      this.showToast('Cria um projeto primeiro!', 'warning');
+      this.showToast(this.translation.category('createCategoryFirst'), 'warning');
       return;
     }
 
@@ -145,13 +146,13 @@ export class TasksPage implements OnInit {
     }));
 
     const alert = await this.alertController.create({
-      header: 'Selecionar Projeto',
-      message: 'Escolhe o projeto para a nova tarefa',
+      header: this.translation.task('selectProject'),
+      message: this.translation.task('selectProjectMessage'),
       inputs,
       cssClass: 'custom-alert',
       buttons: [
         { 
-          text: 'Cancelar', 
+          text: this.translation.common('cancel'), 
           role: 'cancel',
           cssClass: 'alert-button-cancel'
         },
@@ -173,22 +174,22 @@ export class TasksPage implements OnInit {
 
     // Primeiro, pedir a prioridade
     const priorityAlert = await this.alertController.create({
-      header: 'Prioridade',
-      message: 'Seleciona a prioridade da tarefa',
+      header: this.translation.task('selectPriority'),
+      message: this.translation.task('selectPriorityMessage'),
       inputs: [
-        { name: 'priority', type: 'radio', label: '🔴 Alta Prioridade', value: 'high' },
-        { name: 'priority', type: 'radio', label: '🟡 Média Prioridade', value: 'medium', checked: true },
-        { name: 'priority', type: 'radio', label: '🟢 Baixa Prioridade', value: 'low' }
+        { name: 'priority', type: 'radio', label: `🔴 ${this.translation.task('priorityHigh')}`, value: 'high' },
+        { name: 'priority', type: 'radio', label: `🟡 ${this.translation.task('priorityMedium')}`, value: 'medium', checked: true },
+        { name: 'priority', type: 'radio', label: `🟢 ${this.translation.task('priorityLow')}`, value: 'low' }
       ],
       cssClass: 'custom-alert',
       buttons: [
         { 
-          text: 'Cancelar', 
+          text: this.translation.common('cancel'), 
           role: 'cancel',
           cssClass: 'alert-button-cancel'
         },
         {
-          text: 'Continuar',
+          text: this.translation.common('continue'),
           cssClass: 'alert-button-confirm',
           handler: async (data) => {
             const priority = data || 'medium';
@@ -205,25 +206,25 @@ export class TasksPage implements OnInit {
 
   private async showTaskForm(projectId: string, priority: string, defaultDate: Date): Promise<void> {
     const priorityLabels: { [key: string]: string } = {
-      'high': 'Alta',
-      'medium': 'Média',
-      'low': 'Baixa'
+      'high': this.translation.task('priorityHighLabel'),
+      'medium': this.translation.task('priorityMediumLabel'),
+      'low': this.translation.task('priorityLowLabel')
     };
 
     const alert = await this.alertController.create({
-      header: 'Nova Tarefa',
-      message: `Preenche os dados abaixo para criar uma nova tarefa.\n\nPrioridade selecionada: ${priorityLabels[priority] || 'Média'}`,
+      header: this.translation.task('newTask'),
+      message: `${this.translation.task('createTaskForm')}\n\n${this.translation.task('selectedPriority')}: ${priorityLabels[priority] || this.translation.task('priorityMediumLabel')}`,
       inputs: [
         { 
           name: 'title', 
           type: 'text', 
-          placeholder: 'Ex: Revisar relatório mensal',
+          placeholder: this.translation.placeholder('taskTitle'),
           attributes: { required: true, maxlength: 100, autocomplete: 'off' }
         },
         { 
           name: 'description', 
           type: 'textarea', 
-          placeholder: 'Adiciona detalhes sobre a tarefa (opcional)',
+          placeholder: this.translation.placeholder('taskDescription'),
           attributes: { rows: 4, maxlength: 500 }
         },
         { 
@@ -236,12 +237,12 @@ export class TasksPage implements OnInit {
       cssClass: 'custom-alert professional-form',
       buttons: [
         { 
-          text: 'Cancelar', 
+          text: this.translation.common('cancel'), 
           role: 'cancel',
           cssClass: 'alert-button-cancel'
         },
         {
-          text: 'Criar Tarefa',
+          text: this.translation.task('newTask'),
           cssClass: 'alert-button-confirm',
           handler: async (data) => {
             if (data.title?.trim()) {
@@ -256,10 +257,10 @@ export class TasksPage implements OnInit {
               // Agendar notificações para a nova tarefa
               await this.notificationService.scheduleTaskNotifications(newTask);
               await this.loadData();
-              this.showToast('Tarefa criada com sucesso!');
+              this.showToast(this.translation.task('taskCreated'));
               return true;
             } else {
-              this.showToast('O título da tarefa é obrigatório!', 'warning');
+              this.showToast(this.translation.task('taskTitleRequired'), 'warning');
               return false;
             }
           }
@@ -282,12 +283,12 @@ export class TasksPage implements OnInit {
             let label = '';
             
             if (name === 'title') {
-              label = '📝 TÍTULO DA TAREFA';
+              label = this.translation.label('taskTitleLabel');
               if (isRequired) label += ' *';
             } else if (name === 'description') {
-              label = '📄 DESCRIÇÃO (OPCIONAL)';
+              label = this.translation.label('taskDescriptionLabel');
             } else if (name === 'dueDate') {
-              label = '📅 DATA LIMITE';
+              label = this.translation.label('dueDateLabel');
             }
             
             if (label && !wrapper.querySelector('.field-label')) {
@@ -310,16 +311,16 @@ export class TasksPage implements OnInit {
   async deleteTask(task: Task, event: Event): Promise<void> {
     event.stopPropagation();
     const alert = await this.alertController.create({
-      header: 'Eliminar Tarefa',
-      message: `Eliminar "${task.title}"?`,
+      header: this.translation.task('deleteTask'),
+      message: `${this.translation.task('deleteTaskMessage')} "${task.title}"?`,
       buttons: [
-        { text: 'Cancelar', role: 'cancel' },
-        { text: 'Eliminar', cssClass: 'danger', handler: async () => {
+        { text: this.translation.common('cancel'), role: 'cancel' },
+        { text: this.translation.common('delete'), cssClass: 'danger', handler: async () => {
           // Cancelar notificações da tarefa antes de deletar
           await this.notificationService.cancelTaskNotifications(task.id);
           await this.taskService.delete(task.id);
           await this.loadData();
-          this.showToast('Tarefa eliminada!');
+          this.showToast(this.translation.task('taskDeleted'));
         }}
       ]
     });
