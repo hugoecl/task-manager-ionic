@@ -3,7 +3,7 @@
  */
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AlertController, ToastController } from '@ionic/angular';
+import { AlertController, ToastController, ActionSheetController } from '@ionic/angular';
 import { CategoryService, ProjectService } from '../../services';
 import { Category } from '../../models';
 
@@ -21,6 +21,7 @@ export class CategoriesPage implements OnInit {
     private router: Router,
     private alertController: AlertController,
     private toastController: ToastController,
+    private actionSheetController: ActionSheetController,
     private categoryService: CategoryService,
     private projectService: ProjectService
   ) { }
@@ -106,32 +107,99 @@ export class CategoriesPage implements OnInit {
 
   async changeColor(category: Category): Promise<void> {
     const colors = ['#4CAF50', '#2196F3', '#9C27B0', '#FF9800', '#E91E63', '#00BCD4', '#FF5722', '#607D8B'];
-    const inputs = colors.map(color => ({
-      name: 'color',
-      type: 'radio' as const,
-      label: color,
-      value: color,
-      checked: color === category.color
+    
+    // Criar botões para cada cor (o texto será substituído por círculos coloridos)
+    const colorButtons: any[] = colors.map((color, index) => ({
+      text: `color-${index}`, // Placeholder que será substituído
+      cssClass: `color-button color-${index}`,
+      handler: async () => {
+        await this.categoryService.updateCategory(category.id, { color });
+        await this.loadData();
+        this.showToast('Cor atualizada!');
+      }
     }));
 
-    const alert = await this.alertController.create({
-      header: 'Escolher Cor',
-      inputs,
-      buttons: [
-        { text: 'Cancelar', role: 'cancel' },
-        {
-          text: 'Aplicar',
-          handler: async (color) => {
-            if (color) {
-              await this.categoryService.updateCategory(category.id, { color });
-              await this.loadData();
-              this.showToast('Cor atualizada!');
-            }
-          }
-        }
-      ]
+    // Adicionar botão de cancelar
+    colorButtons.push({
+      text: 'Cancelar',
+      role: 'cancel',
+      cssClass: 'action-sheet-cancel'
     });
-    await alert.present();
+
+    const actionSheet = await this.actionSheetController.create({
+      header: 'Escolher Cor',
+      buttons: colorButtons,
+      cssClass: 'color-selection-sheet'
+    });
+
+    await actionSheet.present();
+    
+    // Injetar círculos coloridos após o ActionSheet ser apresentado
+    setTimeout(() => {
+      const hostElement = document.querySelector('ion-action-sheet');
+      if (!hostElement) return;
+
+      const shadowRoot = (hostElement as any).shadowRoot;
+      if (!shadowRoot) return;
+
+      colors.forEach((color, index) => {
+        const button = shadowRoot.querySelector(`.color-${index}`);
+        if (!button) return;
+
+        const isSelected = color === category.color;
+        const borderWidth = isSelected ? '3px' : '2px';
+        const borderColor = isSelected ? '#E68A2E' : 'rgba(255, 255, 255, 0.2)';
+        const boxShadow = isSelected 
+          ? '0 0 0 3px rgba(230, 138, 46, 0.2), 0 2px 8px rgba(0, 0, 0, 0.3)' 
+          : '0 2px 8px rgba(0, 0, 0, 0.3)';
+        const transform = isSelected ? 'scale(1.1)' : 'scale(1)';
+
+        // Limpar o conteúdo do botão
+        button.innerHTML = '';
+        button.style.cssText = `
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          padding: 20px !important;
+          min-height: 80px !important;
+        `;
+
+        // Criar círculo colorido
+        const colorCircle = document.createElement('div');
+        colorCircle.style.cssText = `
+          width: 40px !important;
+          height: 40px !important;
+          border-radius: 50% !important;
+          background: ${color} !important;
+          border: ${borderWidth} solid ${borderColor} !important;
+          box-shadow: ${boxShadow} !important;
+          transition: all 0.2s ease !important;
+          transform: ${transform} !important;
+        `;
+
+        button.appendChild(colorCircle);
+
+        // Atualizar quando clicado
+        button.addEventListener('click', () => {
+          // Atualizar todos os botões
+          colors.forEach((c, i) => {
+            const btn = shadowRoot.querySelector(`.color-${i}`);
+            if (btn && btn.querySelector('div')) {
+              const circle = btn.querySelector('div');
+              if (circle) {
+                const isSelectedNow = c === color;
+                circle.style.borderColor = isSelectedNow ? '#E68A2E' : 'rgba(255, 255, 255, 0.2)';
+                circle.style.borderWidth = isSelectedNow ? '3px' : '2px';
+                circle.style.boxShadow = isSelectedNow 
+                  ? '0 0 0 3px rgba(230, 138, 46, 0.2), 0 2px 8px rgba(0, 0, 0, 0.3)' 
+                  : '0 2px 8px rgba(0, 0, 0, 0.3)';
+                circle.style.transform = isSelectedNow ? 'scale(1.1)' : 'scale(1)';
+              }
+            }
+          });
+        });
+      });
+    }, 200);
   }
 
   async deleteCategory(category: Category): Promise<void> {

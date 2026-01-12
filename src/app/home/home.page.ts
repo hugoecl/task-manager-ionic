@@ -4,7 +4,7 @@
  */
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ProjectService, TaskService, NotificationService } from '../services';
+import { ProjectService, TaskService, NotificationService, UtilsService, WeatherService, WeatherData } from '../services';
 import { Project, Task } from '../models';
 
 @Component({
@@ -22,12 +22,16 @@ export class HomePage implements OnInit {
   totalTasks = 0;
   completedTasks = 0;
   progressPercent = 0;
+  weather: WeatherData | null = null;
+  weatherLoading = false;
 
   constructor(
     private router: Router,
     private projectService: ProjectService,
     private taskService: TaskService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private utils: UtilsService,
+    private weatherService: WeatherService
   ) {
     this.setGreeting();
   }
@@ -74,6 +78,23 @@ export class HomePage implements OnInit {
     
     // Verificar e agendar notificações para todas as tarefas
     await this.notificationService.checkOverdueTasks(tasks);
+    
+    // Carregar dados do clima
+    this.loadWeather();
+  }
+
+  loadWeather(): void {
+    this.weatherLoading = true;
+    // Obtém clima baseado na localização do dispositivo
+    this.weatherService.getCurrentWeather().subscribe({
+      next: (data) => {
+        this.weather = data;
+        this.weatherLoading = false;
+      },
+      error: () => {
+        this.weatherLoading = false;
+      }
+    });
   }
 
   getProjectName(projectId: string): string {
@@ -82,21 +103,11 @@ export class HomePage implements OnInit {
   }
 
   getPriorityColor(priority: string): string {
-    switch (priority) {
-      case 'high': return 'danger';
-      case 'medium': return 'warning';
-      case 'low': return 'success';
-      default: return 'medium';
-    }
+    return this.utils.getPriorityColor(priority);
   }
 
   getPriorityLabel(priority: string): string {
-    switch (priority) {
-      case 'high': return 'Alta';
-      case 'medium': return 'Média';
-      case 'low': return 'Baixa';
-      default: return '';
-    }
+    return this.utils.getPriorityLabel(priority);
   }
 
   goToProjects(): void {
@@ -109,5 +120,18 @@ export class HomePage implements OnInit {
 
   goToOverdueTasks(): void {
     this.router.navigate(['/tabs/tasks'], { queryParams: { filter: 'overdue' } });
+  }
+
+  getWeatherIconName(icon: string): string {
+    const iconMap: { [key: string]: string } = {
+      'sunny': 'sunny',
+      'partly-sunny': 'partly-sunny',
+      'cloudy': 'cloudy',
+      'rainy': 'rainy',
+      'snow': 'snow',
+      'thunderstorm': 'thunderstorm',
+      'cloud': 'cloud'
+    };
+    return iconMap[icon] || 'cloud';
   }
 }

@@ -19,22 +19,18 @@ export class ProjectService {
     await this.storage.create();
   }
 
-  async getProjects(): Promise<Project[]> {
+  async getAll(): Promise<Project[]> {
     const stored = await this.storage.get(this.STORAGE_KEY);
     return stored || [];
   }
 
-  async getAll(): Promise<Project[]> {
-    return this.getProjects();
-  }
-
   async getById(id: string): Promise<Project | undefined> {
-    const projects = await this.getProjects();
+    const projects = await this.getAll();
     return projects.find(p => p.id === id);
   }
 
   async getByCategory(categoryId: string): Promise<Project[]> {
-    const projects = await this.getProjects();
+    const projects = await this.getAll();
     return projects.filter(p => p.categoryId === categoryId);
   }
 
@@ -47,14 +43,14 @@ export class ProjectService {
       updatedAt: now
     };
     
-    const projects = await this.getProjects();
+    const projects = await this.getAll();
     projects.push(newProject);
     await this.storage.set(this.STORAGE_KEY, projects);
     return newProject;
   }
 
   async update(id: string, updates: Partial<Project>): Promise<Project | undefined> {
-    const projects = await this.getProjects();
+    const projects = await this.getAll();
     const index = projects.findIndex(p => p.id === id);
     
     if (index === -1) return undefined;
@@ -69,7 +65,7 @@ export class ProjectService {
   }
 
   async delete(id: string): Promise<boolean> {
-    const projects = await this.getProjects();
+    const projects = await this.getAll();
     const filtered = projects.filter(p => p.id !== id);
     
     if (filtered.length === projects.length) return false;

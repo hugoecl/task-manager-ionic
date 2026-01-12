@@ -5,7 +5,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AlertController, ToastController, ActionSheetController, Platform } from '@ionic/angular';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
-import { ProjectService, TaskService, NotificationService } from '../../services';
+import { ProjectService, TaskService, NotificationService, UtilsService } from '../../services';
 import { Project, Task } from '../../models';
 
 @Component({
@@ -36,7 +36,8 @@ export class TaskDetailPage implements OnInit {
     private actionSheetController: ActionSheetController,
     private projectService: ProjectService,
     private taskService: TaskService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private utils: UtilsService
   ) {}
 
   async ngOnInit(): Promise<void> {
@@ -73,32 +74,18 @@ export class TaskDetailPage implements OnInit {
   }
 
   isOverdue(): boolean {
-    if (!this.task || this.task.completed) return false;
-    const now = new Date();
-    now.setHours(0, 0, 0, 0);
-    const dueDate = new Date(this.task.dueDate);
-    dueDate.setHours(0, 0, 0, 0);
-    return dueDate < now;
+    if (!this.task) return false;
+    return this.utils.isOverdue(this.task.dueDate, this.task.completed);
   }
 
   getPriorityColor(): string {
     if (!this.task) return 'medium';
-    switch (this.task.priority) {
-      case 'high': return 'danger';
-      case 'medium': return 'warning';
-      case 'low': return 'success';
-      default: return 'medium';
-    }
+    return this.utils.getPriorityColor(this.task.priority);
   }
 
   getPriorityText(): string {
     if (!this.task) return '';
-    switch (this.task.priority) {
-      case 'high': return 'Alta';
-      case 'medium': return 'Média';
-      case 'low': return 'Baixa';
-      default: return '';
-    }
+    return this.utils.getPriorityLabel(this.task.priority);
   }
 
   toggleEditMode(): void {

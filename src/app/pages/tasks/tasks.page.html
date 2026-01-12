@@ -6,6 +6,11 @@
       <ion-menu-button *ngIf="isTabMode"></ion-menu-button>
     </ion-buttons>
     <ion-title>{{ isTabMode ? 'Tarefas' : project?.name }}</ion-title>
+    <ion-buttons slot="end" *ngIf="!isTabMode && projectId">
+      <ion-button (click)="toggleReorder()">
+        <ion-icon [name]="reorderEnabled ? 'checkmark' : 'swap-vertical'"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -27,34 +32,52 @@
   </div>
 
   <!-- Tasks List -->
-  <div class="tasks-list" *ngIf="filteredTasks.length > 0">
-    <div class="task-item" 
-         *ngFor="let task of filteredTasks"
-         [class.completed]="task.completed"
-         [class.overdue]="isOverdue(task)">
-      
-      <!-- Checkbox -->
-      <div class="checkbox-area" (click)="toggleComplete(task); $event.stopPropagation()">
-        <div class="custom-check" [class.checked]="task.completed">
-          <ion-icon name="checkmark" *ngIf="task.completed"></ion-icon>
-        </div>
-      </div>
-      
-      <!-- Content -->
-      <div class="task-content" (click)="goToTaskDetail(task.id)">
-        <span class="task-title" [class.done]="task.completed">{{ task.title }}</span>
-        <div class="task-meta">
-          <span class="project" *ngIf="isTabMode">{{ getProjectName(task.projectId) }}</span>
-          <span class="date" [class.late]="isOverdue(task)">{{ task.dueDate | date:'d MMM':'':'pt' }}</span>
-          <span class="tag today" *ngIf="isDueToday(task)">Hoje</span>
-          <span class="tag overdue" *ngIf="isOverdue(task)">Atrasada</span>
-        </div>
-      </div>
-      
-      <!-- Priority Indicator -->
-      <div class="priority-glow" [class]="task.priority"></div>
-    </div>
-  </div>
+  <ion-list *ngIf="filteredTasks.length > 0" lines="none">
+    <ion-reorder-group [disabled]="!reorderEnabled" (ionItemReorder)="handleReorder($event)">
+      <ion-item-sliding *ngFor="let task of filteredTasks">
+        <ion-item 
+          [class.completed]="task.completed"
+          [class.overdue]="isOverdue(task)"
+          [button]="!reorderEnabled"
+          (click)="!reorderEnabled && goToTaskDetail(task.id)">
+          
+          <!-- Reorder Handle -->
+          <ion-reorder slot="start" *ngIf="reorderEnabled"></ion-reorder>
+          
+          <!-- Checkbox -->
+          <div class="checkbox-area" slot="start" *ngIf="!reorderEnabled" (click)="toggleComplete(task); $event.stopPropagation()">
+            <div class="custom-check" [class.checked]="task.completed">
+              <ion-icon name="checkmark" *ngIf="task.completed"></ion-icon>
+            </div>
+          </div>
+          
+          <!-- Content -->
+          <div class="task-content">
+            <span class="task-title" [class.done]="task.completed">{{ task.title }}</span>
+            <div class="task-meta">
+              <span class="project" *ngIf="isTabMode">{{ getProjectName(task.projectId) }}</span>
+              <span class="date" [class.late]="isOverdue(task)">{{ task.dueDate | date:'d MMM':'':'pt' }}</span>
+              <span class="tag today" *ngIf="isDueToday(task)">Hoje</span>
+              <span class="tag overdue" *ngIf="isOverdue(task)">Atrasada</span>
+            </div>
+          </div>
+          
+          <!-- Priority Indicator -->
+          <div class="priority-glow" slot="end" [class]="task.priority"></div>
+        </ion-item>
+        
+        <!-- Sliding Options -->
+        <ion-item-options side="end" *ngIf="!reorderEnabled">
+          <ion-item-option color="primary" (click)="goToTaskDetail(task.id)">
+            <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+          </ion-item-option>
+          <ion-item-option color="danger" (click)="deleteTask(task, $event)">
+            <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+          </ion-item-option>
+        </ion-item-options>
+      </ion-item-sliding>
+    </ion-reorder-group>
+  </ion-list>
 
   <!-- Empty State -->
   <div class="empty-state" *ngIf="filteredTasks.length === 0">

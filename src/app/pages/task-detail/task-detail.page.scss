@@ -94,7 +94,7 @@
     
     ion-icon {
       font-size: 22px;
-      color: #42A5F5;
+      color: #2196F3;
     }
     
     h2 {
@@ -117,11 +117,58 @@
     }
     
     ion-input, ion-textarea {
-      --background: #2D3748;
+      --background: #4A5568;
       --padding-start: 14px;
       --color: #F7FAFC;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1.5px solid rgba(255, 255, 255, 0.15);
       border-radius: 12px;
+    }
+    
+    ion-datetime-button {
+      --background: #4A5568;
+      --background-activated: #5A6575;
+      --color: #F7FAFC;
+      --border-color: rgba(255, 255, 255, 0.15);
+      --border-width: 1.5px;
+      --border-style: solid;
+      --border-radius: 12px;
+      --padding-start: 14px;
+      --padding-end: 14px;
+      --padding-top: 12px;
+      --padding-bottom: 12px;
+      font-size: 16px;
+      font-weight: 500;
+      width: 100%;
+      min-height: 48px;
+      
+      .datetime-button-text {
+        color: #F7FAFC !important;
+        font-weight: 500 !important;
+        font-size: 16px !important;
+      }
+      
+      .datetime-button-placeholder {
+        color: #A0AEC0 !important;
+        font-weight: 400 !important;
+      }
+    }
+    
+    ion-datetime-button::part(native) {
+      background: #4A5568;
+      border: 1.5px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      color: #F7FAFC;
+      padding: 12px 14px;
+    }
+    
+    ion-datetime-button:hover::part(native) {
+      background: #525D70;
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+    
+    ion-datetime-button:active::part(native) {
+      background: #5A6575;
+      border-color: #E68A2E;
     }
   }
   
@@ -157,19 +204,20 @@
     align-items: center;
     gap: 6px;
     padding: 6px 12px;
-    background: rgba(66, 165, 245, 0.1);
+    background: rgba(33, 150, 243, 0.15);
+    border: 1px solid rgba(33, 150, 243, 0.3);
     border-radius: 20px;
     margin-bottom: 16px;
     
     ion-icon {
       font-size: 16px;
-      color: #42A5F5;
+      color: #2196F3;
     }
     
     span {
       font-size: 13px;
-      color: #42A5F5;
-      font-weight: 500;
+      color: #2196F3;
+      font-weight: 600;
     }
   }
   
@@ -204,7 +252,7 @@
     
     ion-icon {
       font-size: 20px;
-      color: #42A5F5;
+      color: #2196F3;
     }
     
     h2 {
@@ -230,14 +278,15 @@
       width: 40px;
       height: 40px;
       border-radius: 10px;
-      background: #4A5568;
+      background: rgba(33, 150, 243, 0.15);
+      border: 1px solid rgba(33, 150, 243, 0.3);
       display: flex;
       align-items: center;
       justify-content: center;
       
       ion-icon {
         font-size: 20px;
-        color: #42A5F5;
+        color: #2196F3;
       }
       
       &.danger {
@@ -280,10 +329,12 @@
     align-items: center;
     gap: 8px;
     margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     
     ion-icon {
       font-size: 20px;
-      color: #42A5F5;
+      color: #2196F3;
     }
     
     h2 {
@@ -312,16 +363,17 @@
   
   .no-image {
     text-align: center;
-    padding: 32px 20px;
-    background: #4A5568;
+    padding: 40px 20px;
+    background: rgba(33, 150, 243, 0.08);
     border-radius: 12px;
-    border: 2px dashed #718096;
+    border: 2px dashed #2196F3;
     
     .no-image-icon {
       width: 64px;
       height: 64px;
       border-radius: 50%;
-      background: #3D4A5C;
+      background: rgba(33, 150, 243, 0.15);
+      border: 2px solid rgba(33, 150, 243, 0.3);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -329,14 +381,23 @@
       
       ion-icon {
         font-size: 32px;
-        color: #718096;
+        color: #2196F3;
       }
     }
     
     p {
       font-size: 14px;
-      color: #A0AEC0;
+      color: #CBD5E0;
       margin: 0 0 16px 0;
+      font-weight: 500;
+    }
+    
+    ion-button {
+      --border-color: #2196F3;
+      --color: #2196F3;
+      --border-width: 2px;
+      --border-style: solid;
+      font-weight: 600;
     }
   }
 }

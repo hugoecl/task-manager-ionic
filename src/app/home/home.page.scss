@@ -26,6 +26,54 @@
   text-transform: capitalize;
 }
 
+/* Weather Widget */
+.weather-widget {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 16px;
+  padding: 12px 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
+  
+  ion-icon {
+    font-size: 32px;
+    color: #E68A2E;
+  }
+  
+  &.loading {
+    color: #A0AEC0;
+    font-size: 14px;
+    
+    ion-spinner {
+      width: 20px;
+      height: 20px;
+    }
+  }
+  
+  .weather-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    
+    .weather-temp {
+      font-size: 20px;
+      font-weight: 700;
+      color: #F7FAFC;
+      line-height: 1.2;
+    }
+    
+    .weather-condition {
+      font-size: 12px;
+      color: #CBD5E0;
+      margin-top: 2px;
+    }
+  }
+}
+
 /* Stats Row */
 .stats-row {
   display: flex;

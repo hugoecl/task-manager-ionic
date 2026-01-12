@@ -272,8 +272,16 @@ ion-alert {
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
     background: #3D4A5C !important;
     box-shadow: none !important;
-    overflow: hidden;
+    overflow: hidden !important; /* Manter hidden mas garantir padding suficiente */
     max-width: 90vw;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  
+  /* Separar visualmente as secções */
+  .alert-wrapper > * {
+    position: relative !important;
+    z-index: auto !important;
   }
   
   .alert-head {
@@ -310,19 +318,21 @@ ion-alert {
   }
   
   .alert-input-group {
-    padding: 0 24px 16px !important;
+    padding: 0 24px 24px !important; /* Mais padding bottom padrão também */
     background: transparent;
     max-height: 60vh;
     overflow-y: auto;
     display: flex !important;
     flex-direction: column !important;
+    margin-bottom: 0 !important;
   }
   
   .professional-form .alert-input-group {
-    padding: 20px 24px 20px !important;
+    padding: 20px 24px 32px !important; /* Mais padding bottom para separar dos botões */
     display: flex !important;
     flex-direction: column !important;
     gap: 0 !important;
+    margin-bottom: 0 !important;
   }
   
   /* Garantir que os inputs apareçam na ordem correta */
@@ -348,7 +358,18 @@ ion-alert {
   }
   
   .professional-form .alert-input-wrapper:last-of-type {
-    margin-bottom: 20px;
+    margin-bottom: 0 !important; /* Remover margem do último input para evitar espaço extra */
+  }
+  
+  /* Garantir espaço entre radio groups e botões */
+  .professional-form .alert-radio-group {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+  }
+  
+  /* Espaçamento mínimo antes dos botões */
+  .professional-form .alert-wrapper {
+    padding-bottom: 0 !important;
   }
   
   /* Garantir que inputs de texto apareçam sempre */
@@ -532,8 +553,9 @@ ion-alert {
   }
   
   .professional-form .alert-radio-group {
-    margin-top: 32px;
-    padding: 36px 20px 20px 20px !important;
+    margin-top: 32px !important;
+    margin-bottom: 20px !important; /* Espaço antes dos botões */
+    padding: 36px 20px 28px 20px !important; /* Mais padding bottom */
     border-top: 1px solid rgba(255, 255, 255, 0.12);
     padding-top: 40px !important;
     position: relative;
@@ -745,12 +767,21 @@ ion-alert {
   }
   
   .alert-button-group {
-    padding: 20px 20px 24px !important;
+    padding: 24px 20px 24px !important; /* Mais padding top para separar do conteúdo */
     background: #3D4A5C !important;
     display: flex !important;
     gap: 12px !important;
     flex-direction: row-reverse !important; /* Botão principal à direita */
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid rgba(255, 255, 255, 0.15) !important; /* Borda mais visível */
+    margin-top: 0 !important;
+    position: relative !important;
+    z-index: 1 !important;
+  }
+  
+  /* Garantir separação visual entre conteúdo e botões */
+  .professional-form .alert-input-group + .alert-button-group {
+    margin-top: 0 !important;
+    padding-top: 28px !important; /* Ainda mais espaço no professional-form */
   }
   
   .alert-button {
@@ -795,6 +826,101 @@ ion-alert {
     background: linear-gradient(135deg, #E68A2E 0%, #F59E2E 100%) !important;
     transform: scale(0.98);
   }
+  
+  /* Alert de seleção de cores */
+  &.color-selection-alert {
+    .alert-wrapper {
+      border-radius: 16px !important;
+    }
+    
+    .alert-head {
+      padding: 24px 24px 16px !important;
+      background: transparent !important;
+    }
+    
+    .alert-title {
+      font-size: 18px !important;
+      font-weight: 700 !important;
+      color: #F7FAFC !important;
+    }
+    
+    .alert-radio-group {
+      padding: 20px !important;
+      display: grid !important;
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 12px !important;
+      border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+      background: transparent !important;
+    }
+    
+    .alert-radio-wrapper {
+      margin: 0 !important;
+      border-radius: 14px !important;
+      background: rgba(255, 255, 255, 0.04) !important;
+      border: 1.5px solid rgba(255, 255, 255, 0.1) !important;
+      min-height: 70px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 12px !important;
+      transition: all 0.2s ease !important;
+      cursor: pointer !important;
+    }
+    
+    .alert-radio-wrapper:hover {
+      background: rgba(255, 255, 255, 0.08) !important;
+      border-color: rgba(230, 138, 46, 0.3) !important;
+      transform: translateY(-2px) !important;
+    }
+    
+    .alert-radio-wrapper:active {
+      transform: translateY(0) !important;
+      background: rgba(255, 255, 255, 0.06) !important;
+    }
+    
+    [aria-checked="true"] .alert-radio-wrapper {
+      background: rgba(230, 138, 46, 0.1) !important;
+      border-color: #E68A2E !important;
+      border-width: 2px !important;
+      box-shadow: 0 0 0 3px rgba(230, 138, 46, 0.15), 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+    }
+    
+    .alert-radio {
+      width: 100% !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      gap: 0 !important;
+    }
+    
+    .alert-radio-icon {
+      display: none !important;
+    }
+    
+    .alert-radio-label {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      text-align: center !important;
+      color: transparent !important;
+    }
+    
+    .color-circle {
+      transition: all 0.2s ease !important;
+    }
+    
+    [aria-checked="true"] .color-circle {
+      border-color: #E68A2E !important;
+      border-width: 3px !important;
+      box-shadow: 0 0 0 3px rgba(230, 138, 46, 0.2), 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+      transform: scale(1.1) !important;
+    }
+  }
 }
 
 /* Classe custom para alerts melhorados */
@@ -836,4 +962,52 @@ ion-datetime::part(calendar-day) {
 ion-datetime::part(next-button),
 ion-datetime::part(prev-button) {
   color: #FFFFFF;
+}
+
+/* Datetime Button */
+ion-datetime-button {
+  --background: #4A5568;
+  --background-activated: #5A6575;
+  --background-hover: #525D70;
+  --color: #F7FAFC;
+  --border-color: rgba(255, 255, 255, 0.15);
+  --border-width: 1.5px;
+  --border-style: solid;
+  --border-radius: 12px;
+  --padding-start: 14px;
+  --padding-end: 14px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+  font-size: 16px;
+  font-weight: 500;
+  width: 100%;
+  min-height: 48px;
+}
+
+ion-datetime-button::part(native) {
+  background: #4A5568 !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.15) !important;
+  border-radius: 12px !important;
+  color: #F7FAFC !important;
+  padding: 12px 14px !important;
+  font-weight: 500 !important;
+  font-size: 16px !important;
+}
+
+ion-datetime-button:hover::part(native) {
+  background: #525D70 !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+}
+
+ion-datetime-button:active::part(native) {
+  background: #5A6575 !important;
+  border-color: #E68A2E !important;
+}
+
+/* ==================== ACTION SHEETS ==================== */
+/* Variáveis CSS para ActionSheets - estilo consistente com o projeto */
+ion-action-sheet {
+  --background: #3D4A5C;
+  --color: #F7FAFC;
+  --button-color: #F7FAFC;
 }

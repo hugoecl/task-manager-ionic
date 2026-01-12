@@ -3,7 +3,7 @@
  */
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AlertController, ToastController } from '@ionic/angular';
+import { AlertController, ToastController, ActionSheetController } from '@ionic/angular';
 import { CategoryService, ProjectService, TaskService, TranslationService } from '../../services';
 import { Category, Project, Task } from '../../models';
 
@@ -25,6 +25,7 @@ export class ProjectsPage implements OnInit {
     private router: Router,
     private alertController: AlertController,
     private toastController: ToastController,
+    private actionSheetController: ActionSheetController,
     private categoryService: CategoryService,
     private projectService: ProjectService,
     private taskService: TaskService,
@@ -82,6 +83,11 @@ export class ProjectsPage implements OnInit {
   }
 
   async addProject(): Promise<void> {
+    if (this.categories.length === 0) {
+      this.showToast(this.translation.category('createCategoryFirst'), 'warning');
+      return;
+    }
+
     // Mapear categorias para labels mais descritivos
     const categoryLabels: { [key: string]: string } = {
       'Escola': '🏫 Escola - Projetos académicos e escolares',
@@ -93,23 +99,41 @@ export class ProjectsPage implements OnInit {
     const getCategoryLabel = (catName: string): string => {
       return categoryLabels[catName] || `📁 ${catName} - Categoria de projetos`;
     };
-    
-    const categoryInputs = this.categories.map(cat => ({
-      name: 'category',
-      type: 'radio' as const,
-      label: getCategoryLabel(cat.name),
-      value: cat.id,
-      checked: cat.id === this.selectedCategoryId
+
+    // Criar botões para cada categoria
+    const categoryButtons: any[] = this.categories.map(category => ({
+      text: getCategoryLabel(category.name),
+      handler: async () => {
+        await this.showProjectForm(category.id);
+      }
     }));
 
-    if (this.categories.length === 0) {
-      this.showToast(this.translation.category('createCategoryFirst'), 'warning');
-      return;
-    }
+    // Adicionar botão de cancelar
+    categoryButtons.push({
+      text: this.translation.common('cancel'),
+      role: 'cancel',
+      cssClass: 'action-sheet-cancel'
+    });
 
+    const categorySheet = await this.actionSheetController.create({
+      header: this.translation.project('selectCategory'),
+      subHeader: this.translation.project('selectCategoryMessage'),
+      buttons: categoryButtons,
+      cssClass: 'category-selection-sheet'
+    });
+
+    await categorySheet.present();
+    
+    // Injetar estilos diretamente no shadow DOM
+    setTimeout(() => {
+      this.injectActionSheetStyles(categorySheet, 'category-selection-sheet');
+    }, 100);
+  }
+
+  private async showProjectForm(categoryId: string): Promise<void> {
     const alert = await this.alertController.create({
       header: this.translation.project('newProject'),
-      message: `${this.translation.project('createProjectForm')}\n\n${this.translation.project('selectCategoryMessage')}`,
+      message: this.translation.project('createProjectForm'),
       inputs: [
         { 
           name: 'name', 
@@ -122,8 +146,7 @@ export class ProjectsPage implements OnInit {
           type: 'textarea', 
           placeholder: this.translation.placeholder('projectDescription'),
           attributes: { rows: 4, maxlength: 300 }
-        },
-        ...categoryInputs
+        }
       ],
       cssClass: 'custom-alert professional-form',
       buttons: [
@@ -136,17 +159,17 @@ export class ProjectsPage implements OnInit {
           text: this.translation.project('newProject'),
           cssClass: 'alert-button-confirm',
           handler: async (data) => {
-            if (data.name && data.name.trim() && data.category) {
+            if (data.name && data.name.trim()) {
               await this.projectService.create({
                 name: data.name.trim(),
                 description: data.description?.trim() || '',
-                categoryId: data.category
+                categoryId: categoryId
               });
               await this.loadData();
               this.showToast(this.translation.project('projectCreated'));
               return true;
             } else {
-              this.showToast(this.translation.project('nameAndCategoryRequired'), 'warning');
+              this.showToast(this.translation.category('nameRequired'), 'warning');
               return false;
             }
           }
@@ -188,47 +211,8 @@ export class ProjectsPage implements OnInit {
         }
       });
       
-      // Adicionar label para o grupo de categorias
-      const radioGroups = inputGroup.querySelectorAll('.alert-radio-group');
-      radioGroups.forEach((radioGroup) => {
-        if (!radioGroup.querySelector('.category-section-label')) {
-          const labelElement = document.createElement('div');
-          labelElement.className = 'category-section-label';
-          labelElement.textContent = `${this.translation.label('categoryLabel')} *`;
-          labelElement.style.cssText = 'color: #E68A2E; font-size: 11px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: 16px; padding-left: 4px; display: block;';
-          (radioGroup as HTMLElement).insertBefore(labelElement, radioGroup.firstChild);
-        }
-        
-        // Melhorar apresentação dos labels das categorias
-        const radioLabels = radioGroup.querySelectorAll('.alert-radio-label');
-        radioLabels.forEach((labelElement) => {
-          const label = labelElement as HTMLElement;
-          const originalText = label.textContent?.trim() || '';
-          
-          // Se o label tem formato "emoji Nome - Descrição", formatar
-          if (originalText.includes(' - ')) {
-            const parts = originalText.split(' - ');
-            const emojiAndName = parts[0].trim();
-            const description = parts[1]?.trim() || '';
-            
-            if (description) {
-              label.innerHTML = `
-                <div style="display: flex; flex-direction: column; gap: 5px; width: 100%;">
-                  <span style="font-weight: 600; font-size: 16px; color: inherit; line-height: 1.3; display: block;">${emojiAndName}</span>
-                  <span style="font-size: 13px; color: #A0AEC0; font-weight: 400; line-height: 1.4; display: block; opacity: 0.9;">${description}</span>
-                </div>
-              `;
-              label.style.cssText = 'padding: 0 !important; margin: 0 !important; display: block !important; flex: 1 !important; min-height: auto !important; width: 100% !important;';
-            }
-          } else if (originalText && !label.querySelector('div')) {
-            // Se não tem descrição, garantir que o texto apareça
-            label.innerHTML = `<span style="font-weight: 600; font-size: 16px; color: inherit;">${originalText}</span>`;
-            label.style.cssText = 'padding: 0 !important; margin: 0 !important; display: block !important; flex: 1 !important;';
-          }
-        });
-      });
-      
-      // Garantir que o campo de nome esteja visível (pode estar escondido por CSS)
+      // Categorias agora são selecionadas via ActionSheet antes do formulário
+      // Garantir que o campo de nome esteja visível
       const nameInput = inputGroup.querySelector('input[name="name"]') as HTMLInputElement;
       if (nameInput) {
         const nameWrapper = nameInput.closest('.alert-input-wrapper') as HTMLElement;
@@ -247,20 +231,58 @@ export class ProjectsPage implements OnInit {
   async editProject(project: Project, event: Event): Promise<void> {
     event.stopPropagation();
     
-    const categoryInputs = this.categories.map(cat => ({
-      name: 'category',
-      type: 'radio' as const,
-      label: cat.name,
-      value: cat.id,
-      checked: cat.id === project.categoryId
+    // Mapear categorias para labels mais descritivos
+    const categoryLabels: { [key: string]: string } = {
+      'Escola': '🏫 Escola',
+      'Trabalho': '💼 Trabalho',
+      'Pessoal': '👤 Pessoal',
+      'Outros': '📁 Outros'
+    };
+    
+    const getCategoryLabel = (catName: string): string => {
+      return categoryLabels[catName] || `📁 ${catName}`;
+    };
+
+    // Criar botões para cada categoria
+    const categoryButtons: any[] = this.categories.map(category => ({
+      text: getCategoryLabel(category.name),
+      handler: async () => {
+        await this.showEditProjectForm(project, category.id);
+      }
     }));
 
+    // Adicionar botão de cancelar
+    categoryButtons.push({
+      text: 'Cancelar',
+      role: 'cancel',
+      cssClass: 'action-sheet-cancel'
+    });
+
+    const categorySheet = await this.actionSheetController.create({
+      header: 'Selecionar Categoria',
+      subHeader: 'Escolhe a categoria para o projeto',
+      buttons: categoryButtons,
+      cssClass: 'category-selection-sheet'
+    });
+
+    await categorySheet.present();
+    
+    // Injetar estilos diretamente no shadow DOM
+    setTimeout(() => {
+      this.injectActionSheetStyles(categorySheet, 'category-selection-sheet');
+    }, 100);
+  }
+
+  private async showEditProjectForm(project: Project, categoryId: string): Promise<void> {
+    const selectedCategory = this.categories.find(c => c.id === categoryId);
+    const categoryName = selectedCategory?.name || 'Sem categoria';
+    
     const alert = await this.alertController.create({
       header: 'Editar Projeto',
+      message: `Categoria: ${categoryName}`,
       inputs: [
         { name: 'name', type: 'text', value: project.name, placeholder: 'Nome' },
-        { name: 'description', type: 'textarea', value: project.description, placeholder: 'Descrição' },
-        ...categoryInputs
+        { name: 'description', type: 'textarea', value: project.description, placeholder: 'Descrição' }
       ],
       buttons: [
         { text: 'Cancelar', role: 'cancel' },
@@ -271,7 +293,7 @@ export class ProjectsPage implements OnInit {
               await this.projectService.update(project.id, {
                 name: data.name.trim(),
                 description: data.description?.trim() || '',
-                categoryId: data.category
+                categoryId: categoryId
               });
               await this.loadData();
               this.showToast('Projeto atualizado!');
@@ -330,5 +352,154 @@ export class ProjectsPage implements OnInit {
       color: color === 'warning' ? 'warning' : color === 'danger' ? 'danger' : 'success'
     });
     await toast.present();
+  }
+
+  private injectActionSheetStyles(actionSheet: HTMLIonActionSheetElement, cssClass: string): void {
+    // Aguardar o ActionSheet ser totalmente renderizado
+    setTimeout(() => {
+      const hostElement = document.querySelector('ion-action-sheet');
+      if (!hostElement) return;
+
+      // Tentar acessar o shadowRoot
+      const shadowRoot = (hostElement as any).shadowRoot;
+      if (shadowRoot) {
+        const style = document.createElement('style');
+        style.textContent = `
+          .action-sheet-container {
+            background: #3D4A5C !important;
+            border-radius: 16px 16px 0 0 !important;
+            border-top: 3px solid #E68A2E !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-bottom: none !important;
+            box-shadow: none !important;
+          }
+          
+          .action-sheet-title {
+            color: #F7FAFC !important;
+            font-weight: 700 !important;
+            font-size: 18px !important;
+            padding: 20px 20px 12px !important;
+            background: transparent !important;
+            margin: 0 !important;
+            border-radius: 0 !important;
+          }
+          
+          .action-sheet-title::before {
+            display: none !important;
+          }
+          
+          .action-sheet-sub-title {
+            color: #A0AEC0 !important;
+            font-size: 14px !important;
+            padding: 0 20px 16px !important;
+            font-weight: 400 !important;
+            line-height: 1.5 !important;
+          }
+          
+          .action-sheet-button {
+            color: #F7FAFC !important;
+            font-weight: 600 !important;
+            font-size: 15px !important;
+            padding: 16px 20px !important;
+            min-height: 56px !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+            background: transparent !important;
+            border-left: 3px solid transparent !important;
+            transition: all 0.2s ease !important;
+            margin: 0 12px 6px !important;
+            border-radius: 12px !important;
+            position: relative !important;
+            text-align: left !important;
+            white-space: normal !important;
+            line-height: 1.5 !important;
+          }
+          
+          .action-sheet-button:last-of-type:not(.action-sheet-cancel) {
+            border-bottom: none !important;
+            margin-bottom: 8px !important;
+          }
+          
+          .action-sheet-button:hover {
+            background: rgba(255, 255, 255, 0.05) !important;
+            border-left-color: #E68A2E !important;
+          }
+          
+          .action-sheet-button:active {
+            background: rgba(255, 255, 255, 0.08) !important;
+            border-left-color: #D4740F !important;
+            transform: scale(0.98) !important;
+          }
+          
+          .action-sheet-button.action-sheet-cancel {
+            background: #4A5568 !important;
+            color: #CBD5E0 !important;
+            font-weight: 600 !important;
+            margin: 16px 12px 12px !important;
+            border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 12px !important;
+            border-left: none !important;
+            padding: 16px 20px !important;
+            font-size: 15px !important;
+            box-shadow: none !important;
+            text-align: center !important;
+          }
+          
+          .action-sheet-button.action-sheet-cancel:hover {
+            background: #5A6575 !important;
+          }
+          
+          .action-sheet-button.action-sheet-cancel:active {
+            background: #4A5568 !important;
+            transform: scale(0.98) !important;
+          }
+        `;
+        shadowRoot.appendChild(style);
+      } else {
+        // Fallback: aplicar estilos globalmente se shadowRoot não estiver acessível
+        const styleId = `action-sheet-styles-${cssClass}`;
+        if (!document.getElementById(styleId)) {
+          const style = document.createElement('style');
+          style.id = styleId;
+          style.textContent = `
+            ion-action-sheet.${cssClass} .action-sheet-container {
+              background: #3D4A5C !important;
+              border-radius: 16px 16px 0 0 !important;
+              border-top: 3px solid #E68A2E !important;
+              border: 1px solid rgba(255, 255, 255, 0.1) !important;
+              border-bottom: none !important;
+              box-shadow: none !important;
+            }
+            
+            ion-action-sheet.${cssClass} .action-sheet-title {
+              color: #F7FAFC !important;
+              font-weight: 700 !important;
+              font-size: 18px !important;
+              padding: 20px 20px 12px !important;
+            }
+            
+            ion-action-sheet.${cssClass} .action-sheet-sub-title {
+              color: #A0AEC0 !important;
+              font-size: 14px !important;
+              padding: 0 20px 16px !important;
+            }
+            
+            ion-action-sheet.${cssClass} .action-sheet-button {
+              color: #F7FAFC !important;
+              font-weight: 600 !important;
+              font-size: 15px !important;
+              padding: 16px 20px !important;
+              min-height: 56px !important;
+              background: transparent !important;
+            }
+            
+            ion-action-sheet.${cssClass} .action-sheet-button.action-sheet-cancel {
+              background: #4A5568 !important;
+              color: #CBD5E0 !important;
+            }
+          `;
+          document.head.appendChild(style);
+        }
+      }
+    }, 200);
   }
 }

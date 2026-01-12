@@ -45,6 +45,19 @@
       <span class="task-badge" *ngIf="tasksForDate.length > 0">{{ tasksForDate.length }}</span>
     </div>
 
+    <!-- Weather for Selected Date -->
+    <div class="weather-card" *ngIf="weather && !weatherLoading">
+      <ion-icon [name]="getWeatherIconName(weather.icon)"></ion-icon>
+      <div class="weather-info">
+        <span class="weather-temp">{{ weather.temperature }}°C</span>
+        <span class="weather-condition">{{ weather.condition }}</span>
+      </div>
+    </div>
+    <div class="weather-card loading" *ngIf="weatherLoading">
+      <ion-spinner name="crescent"></ion-spinner>
+      <span>Carregando clima...</span>
+    </div>
+
     <!-- Tasks for day -->
     <div class="day-tasks" *ngIf="tasksForDate.length > 0">
       <div class="day-task" 

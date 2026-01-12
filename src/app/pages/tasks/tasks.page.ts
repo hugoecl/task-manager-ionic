@@ -3,8 +3,8 @@
  */
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AlertController, ToastController, ItemReorderEventDetail } from '@ionic/angular';
-import { ProjectService, TaskService, NotificationService, TranslationService } from '../../services';
+import { AlertController, ToastController, ItemReorderEventDetail, ActionSheetController } from '@ionic/angular';
+import { ProjectService, TaskService, NotificationService, TranslationService, UtilsService } from '../../services';
 import { Project, Task } from '../../models';
 
 @Component({
@@ -28,10 +28,12 @@ export class TasksPage implements OnInit {
     private router: Router,
     private alertController: AlertController,
     private toastController: ToastController,
+    private actionSheetController: ActionSheetController,
     private projectService: ProjectService,
     private taskService: TaskService,
     private notificationService: NotificationService,
-    private translation: TranslationService
+    private translation: TranslationService,
+    private utils: UtilsService
   ) {}
 
   async ngOnInit(): Promise<void> {
@@ -92,29 +94,15 @@ export class TasksPage implements OnInit {
   }
 
   isOverdue(task: Task): boolean {
-    if (task.completed) return false;
-    const now = new Date();
-    now.setHours(0, 0, 0, 0);
-    const dueDate = new Date(task.dueDate);
-    dueDate.setHours(0, 0, 0, 0);
-    return dueDate < now;
+    return this.utils.isOverdue(task.dueDate, task.completed);
   }
 
   isDueToday(task: Task): boolean {
-    const now = new Date();
-    now.setHours(0, 0, 0, 0);
-    const dueDate = new Date(task.dueDate);
-    dueDate.setHours(0, 0, 0, 0);
-    return dueDate.getTime() === now.getTime();
+    return this.utils.isToday(task.dueDate);
   }
 
   getPriorityColor(priority: string): string {
-    switch (priority) {
-      case 'high': return 'danger';
-      case 'medium': return 'warning';
-      case 'low': return 'success';
-      default: return 'medium';
-    }
+    return this.utils.getPriorityColor(priority);
   }
 
   async toggleComplete(task: Task): Promise<void> {
@@ -137,71 +125,80 @@ export class TasksPage implements OnInit {
       return;
     }
 
-    const inputs = this.projects.map((p, i) => ({
-      name: 'project', 
-      type: 'radio' as const, 
-      label: p.name, 
-      value: p.id, 
-      checked: i === 0
+    // Criar botões para cada projeto
+    const buttons: any[] = this.projects.map(project => ({
+      text: project.name,
+      handler: async () => {
+        await this.createTask(project.id);
+      }
     }));
 
-    const alert = await this.alertController.create({
-      header: this.translation.task('selectProject'),
-      message: this.translation.task('selectProjectMessage'),
-      inputs,
-      cssClass: 'custom-alert',
-      buttons: [
-        { 
-          text: this.translation.common('cancel'), 
-          role: 'cancel',
-          cssClass: 'alert-button-cancel'
-        },
-        { 
-          text: 'Continuar', 
-          cssClass: 'alert-button-confirm',
-          handler: async (projectId) => { 
-            if (projectId) await this.createTask(projectId); 
-          }
-        }
-      ]
+    // Adicionar botão de cancelar no final
+    buttons.push({
+      text: this.translation.common('cancel'),
+      role: 'cancel',
+      cssClass: 'action-sheet-cancel'
     });
-    await alert.present();
+
+    const actionSheet = await this.actionSheetController.create({
+      header: this.translation.task('selectProject'),
+      subHeader: this.translation.task('selectProjectMessage'),
+      buttons: buttons,
+      cssClass: 'project-selection-sheet'
+    });
+
+    await actionSheet.present();
+    
+    // Injetar estilos diretamente no shadow DOM
+    setTimeout(() => {
+      this.injectActionSheetStyles(actionSheet, 'project-selection-sheet');
+    }, 100);
   }
 
   async createTask(projectId: string): Promise<void> {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
 
-    // Primeiro, pedir a prioridade
-    const priorityAlert = await this.alertController.create({
-      header: this.translation.task('selectPriority'),
-      message: this.translation.task('selectPriorityMessage'),
-      inputs: [
-        { name: 'priority', type: 'radio', label: `🔴 ${this.translation.task('priorityHigh')}`, value: 'high' },
-        { name: 'priority', type: 'radio', label: `🟡 ${this.translation.task('priorityMedium')}`, value: 'medium', checked: true },
-        { name: 'priority', type: 'radio', label: `🟢 ${this.translation.task('priorityLow')}`, value: 'low' }
-      ],
-      cssClass: 'custom-alert',
-      buttons: [
-        { 
-          text: this.translation.common('cancel'), 
-          role: 'cancel',
-          cssClass: 'alert-button-cancel'
-        },
-        {
-          text: this.translation.common('continue'),
-          cssClass: 'alert-button-confirm',
-          handler: async (data) => {
-            const priority = data || 'medium';
-            // Agora mostrar o alert principal com os campos
-            await this.showTaskForm(projectId, priority, tomorrow);
-            return true;
-          }
+    // Criar ActionSheet para seleção de prioridade
+    const priorityButtons: any[] = [
+      {
+        text: `🔴 ${this.translation.task('priorityHigh')}`,
+        handler: async () => {
+          await this.showTaskForm(projectId, 'high', tomorrow);
         }
-      ]
+      },
+      {
+        text: `🟡 ${this.translation.task('priorityMedium')}`,
+        handler: async () => {
+          await this.showTaskForm(projectId, 'medium', tomorrow);
+        }
+      },
+      {
+        text: `🟢 ${this.translation.task('priorityLow')}`,
+        handler: async () => {
+          await this.showTaskForm(projectId, 'low', tomorrow);
+        }
+      },
+      {
+        text: this.translation.common('cancel'),
+        role: 'cancel',
+        cssClass: 'action-sheet-cancel'
+      }
+    ];
+
+    const prioritySheet = await this.actionSheetController.create({
+      header: this.translation.task('selectPriority'),
+      subHeader: this.translation.task('selectPriorityMessage'),
+      buttons: priorityButtons,
+      cssClass: 'priority-selection-sheet'
     });
 
-    await priorityAlert.present();
+    await prioritySheet.present();
+    
+    // Injetar estilos diretamente no shadow DOM
+    setTimeout(() => {
+      this.injectActionSheetStyles(prioritySheet, 'priority-selection-sheet');
+    }, 100);
   }
 
   private async showTaskForm(projectId: string, priority: string, defaultDate: Date): Promise<void> {
@@ -348,5 +345,154 @@ export class TasksPage implements OnInit {
       color: color === 'warning' ? 'warning' : color === 'danger' ? 'danger' : 'success'
     });
     await toast.present();
+  }
+
+  private injectActionSheetStyles(actionSheet: HTMLIonActionSheetElement, cssClass: string): void {
+    // Aguardar o ActionSheet ser totalmente renderizado
+    setTimeout(() => {
+      const hostElement = document.querySelector('ion-action-sheet');
+      if (!hostElement) return;
+
+      // Tentar acessar o shadowRoot
+      const shadowRoot = (hostElement as any).shadowRoot;
+      if (shadowRoot) {
+        const style = document.createElement('style');
+        style.textContent = `
+          .action-sheet-container {
+            background: #3D4A5C !important;
+            border-radius: 16px 16px 0 0 !important;
+            border-top: 3px solid #E68A2E !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-bottom: none !important;
+            box-shadow: none !important;
+          }
+          
+          .action-sheet-title {
+            color: #F7FAFC !important;
+            font-weight: 700 !important;
+            font-size: 18px !important;
+            padding: 20px 20px 12px !important;
+            background: transparent !important;
+            margin: 0 !important;
+            border-radius: 0 !important;
+          }
+          
+          .action-sheet-title::before {
+            display: none !important;
+          }
+          
+          .action-sheet-sub-title {
+            color: #A0AEC0 !important;
+            font-size: 14px !important;
+            padding: 0 20px 16px !important;
+            font-weight: 400 !important;
+            line-height: 1.5 !important;
+          }
+          
+          .action-sheet-button {
+            color: #F7FAFC !important;
+            font-weight: 600 !important;
+            font-size: 15px !important;
+            padding: 16px 20px !important;
+            min-height: 56px !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+            background: transparent !important;
+            border-left: 3px solid transparent !important;
+            transition: all 0.2s ease !important;
+            margin: 0 12px 6px !important;
+            border-radius: 12px !important;
+            position: relative !important;
+            text-align: left !important;
+            white-space: normal !important;
+            line-height: 1.5 !important;
+          }
+          
+          .action-sheet-button:last-of-type:not(.action-sheet-cancel) {
+            border-bottom: none !important;
+            margin-bottom: 8px !important;
+          }
+          
+          .action-sheet-button:hover {
+            background: rgba(255, 255, 255, 0.05) !important;
+            border-left-color: #E68A2E !important;
+          }
+          
+          .action-sheet-button:active {
+            background: rgba(255, 255, 255, 0.08) !important;
+            border-left-color: #D4740F !important;
+            transform: scale(0.98) !important;
+          }
+          
+          .action-sheet-button.action-sheet-cancel {
+            background: #4A5568 !important;
+            color: #CBD5E0 !important;
+            font-weight: 600 !important;
+            margin: 16px 12px 12px !important;
+            border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 12px !important;
+            border-left: none !important;
+            padding: 16px 20px !important;
+            font-size: 15px !important;
+            box-shadow: none !important;
+            text-align: center !important;
+          }
+          
+          .action-sheet-button.action-sheet-cancel:hover {
+            background: #5A6575 !important;
+          }
+          
+          .action-sheet-button.action-sheet-cancel:active {
+            background: #4A5568 !important;
+            transform: scale(0.98) !important;
+          }
+        `;
+        shadowRoot.appendChild(style);
+      } else {
+        // Fallback: aplicar estilos globalmente se shadowRoot não estiver acessível
+        const styleId = `action-sheet-styles-${cssClass}`;
+        if (!document.getElementById(styleId)) {
+          const style = document.createElement('style');
+          style.id = styleId;
+          style.textContent = `
+            ion-action-sheet.${cssClass} .action-sheet-container {
+              background: #3D4A5C !important;
+              border-radius: 16px 16px 0 0 !important;
+              border-top: 3px solid #E68A2E !important;
+              border: 1px solid rgba(255, 255, 255, 0.1) !important;
+              border-bottom: none !important;
+              box-shadow: none !important;
+            }
+            
+            ion-action-sheet.${cssClass} .action-sheet-title {
+              color: #F7FAFC !important;
+              font-weight: 700 !important;
+              font-size: 18px !important;
+              padding: 20px 20px 12px !important;
+            }
+            
+            ion-action-sheet.${cssClass} .action-sheet-sub-title {
+              color: #A0AEC0 !important;
+              font-size: 14px !important;
+              padding: 0 20px 16px !important;
+            }
+            
+            ion-action-sheet.${cssClass} .action-sheet-button {
+              color: #F7FAFC !important;
+              font-weight: 600 !important;
+              font-size: 15px !important;
+              padding: 16px 20px !important;
+              min-height: 56px !important;
+              background: transparent !important;
+            }
+            
+            ion-action-sheet.${cssClass} .action-sheet-button.action-sheet-cancel {
+              background: #4A5568 !important;
+              color: #CBD5E0 !important;
+            }
+          `;
+          document.head.appendChild(style);
+        }
+      }
+    }, 200);
   }
 }

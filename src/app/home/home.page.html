@@ -13,6 +13,19 @@
     <div class="hero-glow"></div>
     <h1 class="hero-greeting">{{ greeting }}</h1>
     <p class="hero-date">{{ currentDate | date:'EEEE, d MMMM':'':'pt' }}</p>
+    
+    <!-- Weather Widget -->
+    <div class="weather-widget" *ngIf="weather && !weatherLoading">
+      <ion-icon [name]="getWeatherIconName(weather.icon)"></ion-icon>
+      <div class="weather-info">
+        <span class="weather-temp">{{ weather.temperature }}°C</span>
+        <span class="weather-condition">{{ weather.condition }}</span>
+      </div>
+    </div>
+    <div class="weather-widget loading" *ngIf="weatherLoading">
+      <ion-spinner name="crescent"></ion-spinner>
+      <span>Carregando clima...</span>
+    </div>
   </div>
 
   <!-- Stats Cards -->

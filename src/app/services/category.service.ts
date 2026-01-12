@@ -49,7 +49,7 @@ export class CategoryService {
   }
 
   async updateCategory(id: string, updates: Partial<Category>): Promise<Category | undefined> {
-    const categories = await this.getCategories();
+    const categories = await this.getAll();
     const index = categories.findIndex(c => c.id === id);
     
     if (index === -1) return undefined;
@@ -60,7 +60,7 @@ export class CategoryService {
   }
 
   async deleteCategory(id: string): Promise<boolean> {
-    const categories = await this.getCategories();
+    const categories = await this.getAll();
     const filtered = categories.filter(c => c.id !== id);
     
     if (filtered.length === categories.length) return false;

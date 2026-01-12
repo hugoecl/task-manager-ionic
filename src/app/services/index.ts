@@ -8,3 +8,5 @@ export * from './task.service';
 export * from './data-init.service';
 export * from './notification.service';
 export * from './translation.service';
+export * from './utils.service';
+export * from './weather.service';

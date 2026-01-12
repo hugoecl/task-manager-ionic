@@ -4,7 +4,7 @@
  */
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { TaskService, ProjectService } from '../../services';
+import { TaskService, ProjectService, UtilsService, WeatherService, WeatherData } from '../../services';
 import { Task, Project } from '../../models';
 
 @Component({
@@ -19,11 +19,15 @@ export class CalendarPage implements OnInit {
   allTasks: Task[] = [];
   projects: Map<string, Project> = new Map();
   highlightedDates: { date: string; textColor: string; backgroundColor: string }[] = [];
+  weather: WeatherData | null = null;
+  weatherLoading = false;
 
   constructor(
     private router: Router,
     private taskService: TaskService,
-    private projectService: ProjectService
+    private projectService: ProjectService,
+    private utils: UtilsService,
+    private weatherService: WeatherService
   ) {}
 
   async ngOnInit(): Promise<void> {
@@ -43,6 +47,7 @@ export class CalendarPage implements OnInit {
     
     this.prepareHighlightedDates();
     await this.loadTasksForSelectedDate();
+    this.loadWeatherForDate();
   }
 
   prepareHighlightedDates(): void {
@@ -97,6 +102,7 @@ export class CalendarPage implements OnInit {
   async onDateChange(event: any): Promise<void> {
     this.selectedDate = event.detail.value;
     await this.loadTasksForSelectedDate();
+    this.loadWeatherForDate();
   }
 
   async loadTasksForSelectedDate(): Promise<void> {
@@ -137,32 +143,7 @@ export class CalendarPage implements OnInit {
   }
 
   getFormattedSelectedDate(): string {
-    const date = new Date(this.selectedDate);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    date.setHours(0, 0, 0, 0);
-
-    if (date.getTime() === today.getTime()) {
-      return 'Hoje';
-    }
-
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    if (date.getTime() === tomorrow.getTime()) {
-      return 'Amanhã';
-    }
-
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
-    if (date.getTime() === yesterday.getTime()) {
-      return 'Ontem';
-    }
-
-    return date.toLocaleDateString('pt-PT', { 
-      weekday: 'long', 
-      day: 'numeric', 
-      month: 'long' 
-    });
+    return this.utils.formatDate(new Date(this.selectedDate));
   }
 
   getTaskStats(): { total: number; completed: number; pending: number; overdue: number } {
@@ -178,5 +159,42 @@ export class CalendarPage implements OnInit {
       }
     });
     return stats;
+  }
+
+  loadWeatherForDate(): void {
+    const selectedDate = new Date(this.selectedDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    selectedDate.setHours(0, 0, 0, 0);
+    
+    // Só carregar se for hoje ou data futura (previsão)
+    if (selectedDate >= today) {
+      this.weatherLoading = true;
+      // Obtém previsão baseada na localização do dispositivo
+      this.weatherService.getWeatherForDate(selectedDate).subscribe({
+        next: (data) => {
+          this.weather = data;
+          this.weatherLoading = false;
+        },
+        error: () => {
+          this.weatherLoading = false;
+        }
+      });
+    } else {
+      this.weather = null;
+    }
+  }
+
+  getWeatherIconName(icon: string): string {
+    const iconMap: { [key: string]: string } = {
+      'sunny': 'sunny',
+      'partly-sunny': 'partly-sunny',
+      'cloudy': 'cloudy',
+      'rainy': 'rainy',
+      'snow': 'snow',
+      'thunderstorm': 'thunderstorm',
+      'cloud': 'cloud'
+    };
+    return iconMap[icon] || 'cloud';
   }
 }

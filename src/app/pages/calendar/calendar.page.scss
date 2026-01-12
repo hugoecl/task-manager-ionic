@@ -8,6 +8,10 @@
   justify-content: center;
   gap: 20px;
   padding: 12px 16px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  flex-wrap: wrap;
   
   .legend-item {
     display: flex;
@@ -16,6 +20,7 @@
     font-size: 12px;
     color: #E2E8F0;
     font-weight: 500;
+    white-space: nowrap;
   }
   
   .dot {
@@ -36,11 +41,16 @@
   border-radius: 16px;
   margin: 0 16px;
   overflow: hidden;
+  width: calc(100% - 32px);
+  max-width: 100%;
+  box-sizing: border-box;
   
   ion-datetime {
     --background: #3D4A5C;
     width: 100%;
+    max-width: 100%;
     color: #F7FAFC;
+    box-sizing: border-box;
     
     &::part(calendar-day today) {
       border: 2px solid #E68A2E;
@@ -90,6 +100,56 @@
 /* Day Section */
 .day-section {
   padding: 20px 16px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Weather Card */
+.weather-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 12px 0 16px;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  
+  ion-icon {
+    font-size: 28px;
+    color: #E68A2E;
+  }
+  
+  &.loading {
+    color: #A0AEC0;
+    font-size: 14px;
+    justify-content: center;
+    
+    ion-spinner {
+      width: 18px;
+      height: 18px;
+    }
+  }
+  
+  .weather-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    
+    .weather-temp {
+      font-size: 18px;
+      font-weight: 700;
+      color: #F7FAFC;
+      line-height: 1.2;
+    }
+    
+    .weather-condition {
+      font-size: 12px;
+      color: #CBD5E0;
+      margin-top: 2px;
+    }
+  }
 }
 
 .day-header {

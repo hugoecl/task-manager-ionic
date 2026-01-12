@@ -19,27 +19,23 @@ export class TaskService {
     await this.storage.create();
   }
 
-  async getTasks(): Promise<Task[]> {
+  async getAll(): Promise<Task[]> {
     const stored = await this.storage.get(this.STORAGE_KEY);
     return stored || [];
   }
 
-  async getAll(): Promise<Task[]> {
-    return this.getTasks();
-  }
-
   async getById(id: string): Promise<Task | undefined> {
-    const tasks = await this.getTasks();
+    const tasks = await this.getAll();
     return tasks.find(t => t.id === id);
   }
 
   async getByProject(projectId: string): Promise<Task[]> {
-    const tasks = await this.getTasks();
+    const tasks = await this.getAll();
     return tasks.filter(t => t.projectId === projectId).sort((a, b) => a.order - b.order);
   }
 
   async getByDate(date: Date): Promise<Task[]> {
-    const tasks = await this.getTasks();
+    const tasks = await this.getAll();
     const dateStr = date.toISOString().split('T')[0];
     return tasks.filter(t => {
       const taskDate = new Date(t.dueDate).toISOString().split('T')[0];
@@ -48,7 +44,7 @@ export class TaskService {
   }
 
   async getOverdue(): Promise<Task[]> {
-    const tasks = await this.getTasks();
+    const tasks = await this.getAll();
     const now = new Date();
     now.setHours(0, 0, 0, 0);
     
@@ -62,7 +58,7 @@ export class TaskService {
 
   async create(task: Omit<Task, 'id' | 'createdAt' | 'updatedAt' | 'order'>): Promise<Task> {
     const now = new Date();
-    const tasks = await this.getTasks();
+    const tasks = await this.getAll();
     const projectTasks = tasks.filter(t => t.projectId === task.projectId);
     const maxOrder = projectTasks.length > 0 ? Math.max(...projectTasks.map(t => t.order)) : 0;
     
@@ -80,7 +76,7 @@ export class TaskService {
   }
 
   async update(id: string, updates: Partial<Task>): Promise<Task | undefined> {
-    const tasks = await this.getTasks();
+    const tasks = await this.getAll();
     const index = tasks.findIndex(t => t.id === id);
     
     if (index === -1) return undefined;
@@ -101,7 +97,7 @@ export class TaskService {
   }
 
   async delete(id: string): Promise<boolean> {
-    const tasks = await this.getTasks();
+    const tasks = await this.getAll();
     const filtered = tasks.filter(t => t.id !== id);
     
     if (filtered.length === tasks.length) return false;
@@ -111,7 +107,7 @@ export class TaskService {
   }
 
   async deleteByProject(projectId: string): Promise<void> {
-    const tasks = await this.getTasks();
+    const tasks = await this.getAll();
     const filtered = tasks.filter(t => t.projectId !== projectId);
     await this.storage.set(this.STORAGE_KEY, filtered);
   }
@@ -121,7 +117,7 @@ export class TaskService {
   }
 
   async reorder(projectId: string, taskIds: string[]): Promise<void> {
-    const tasks = await this.getTasks();
+    const tasks = await this.getAll();
     taskIds.forEach((id, index) => {
       const task = tasks.find(t => t.id === id);
       if (task) {
